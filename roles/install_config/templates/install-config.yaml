@@ -1,0 +1,46 @@
+apiVersion: v1
+baseDomain: {{ os_base_domain }}
+metadata:
+  name: {{ os_base_domain }}
+networking:
+  machineCIDR: {{ os_public_cidr }}
+  networkType: OVNKubernetes
+compute:
+- name: worker
+  replicas: 2
+controlPlane:
+  name: master
+  replicas: 3
+  platform:
+    baremetal: {}
+platform:
+  baremetal:
+    apiVIP: {{ os_vip_api }}
+    ingressVIP: {{ os_vip_ingress }}
+    dnsVIP: {{ os_vip_dns }}
+    provisioningNetworkInterface: nic2
+    provisioningNetworkCIDR: 172.16.111.0/24
+    provisioningBridge: provisioning
+    hosts:
+{% for host in groups.managers %}
+      - name: openshift-master-{{ loop.index0 }}
+        role: master
+        bmc:
+          address: ipmi://{{ hostvars[host].ipmi_host }}
+          username: {{ os_ipmi_user }}
+          password: {{ os_ipmi_password }}
+        bootMACAddress: {{ hostvars[host].provisioning_mac }}
+        hardwareProfile: default
+{% endfor %}
+{% for host in groups.workers %}
+      - name: openshift-worker-{{ loop.index0 }}
+        role: worker
+        bmc:
+          address: ipmi://{{ hostvars[host].ipmi_host }}
+          username: {{ os_ipmi_user }}
+          password: {{ os_ipmi_password }}
+        bootMACAddress: {{ hostvars[host].provisioning_mac }}
+        hardwareProfile: unknown
+{% endfor %}
+pullSecret: '{{ lookup("file", "pull-secret.txt") }}'
+sshKey: '{{ os_public_key }}'

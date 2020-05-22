@@ -25,3 +25,9 @@
   roles:
     - openshift_installer
     - rhcos_cache
+
+- hosts: provisioner
+  tags: [install_config]
+  gather_facts: false
+  roles:
+    - install_config

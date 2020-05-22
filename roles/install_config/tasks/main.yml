@@ -1,0 +1,10 @@
+---
+- name: ensure clusterconfigs directory exists
+  file:
+    path: /home/kni/clusterconfigs
+    state: directory
+
+- name: create install-config.yaml
+  template:
+    src: install-config.yaml
+    dest: /home/kni/clusterconfigs/install-config.yaml

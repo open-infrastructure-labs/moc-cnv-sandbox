@@ -1,6 +1,0 @@
----
-os_base_domain: cnv.massopen.cloud
-os_vip_api: 128.31.28.91
-os_vip_ingress: 128.31.28.92
-os_vip_dns: 128.31.28.93
-os_public_cidr: 128.31.28.0/24
