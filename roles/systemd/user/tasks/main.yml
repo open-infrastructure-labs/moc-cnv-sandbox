@@ -1,0 +1,5 @@
+---
+- name: ensure user unit directory exists
+  file:
+    path: "~/.config/systemd/user"
+    state: directory

@@ -1,0 +1,5 @@
+---
+- name: create podman service unit {{ podman_unit_file }}
+  template:
+    src: template.service
+    dest: "{{ podman_unit_file }}"

@@ -1,0 +1,26 @@
+---
+- name: create kni user
+  become: true
+  user:
+    name: kni
+    comment: KNI User
+    groups:
+      libvirt
+
+- name: grant sudo privileges to kni user
+  become: true
+  copy:
+    content: |-
+      kni ALL=(root) NOPASSWD:ALL
+    dest: /etc/sudoers.d/kni
+    mode: "0440"
+    owner: root
+    group: root
+
+- name: create ssh key
+  become: true
+  become_user: kni
+  command: >-
+    ssh-keygen -t rsa -f /home/kni/.ssh/id_rsa -N ''
+  args:
+    creates: /home/kni/.ssh/id_rsa

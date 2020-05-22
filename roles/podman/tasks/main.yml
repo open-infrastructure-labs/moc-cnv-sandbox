@@ -1,0 +1,7 @@
+---
+- name: install podman
+  become: true
+  become_user: root
+  package:
+    name: podman
+    state: installed

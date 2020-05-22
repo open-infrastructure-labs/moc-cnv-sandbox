@@ -1,0 +1,8 @@
+---
+base_packages:
+  - ipmitool
+  - jq
+  - mkisofs
+  - python3-devel
+  - tar
+  - policycoreutils-python-utils

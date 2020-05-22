@@ -1,0 +1,6 @@
+---
+provisioner_services:
+  - http
+
+provisioner_ports:
+  - 8080/tcp

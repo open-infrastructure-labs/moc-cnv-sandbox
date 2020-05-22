@@ -1,0 +1,4 @@
+---
+- name: reload systemd user
+  command: >-
+    systemctl --user daemon-reload

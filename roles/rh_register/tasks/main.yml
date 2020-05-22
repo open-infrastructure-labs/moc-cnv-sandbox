@@ -1,0 +1,17 @@
+---
+- name: register system with redhat
+  become: true
+  redhat_subscription:
+    state: present
+    username: "{{ rh_username }}"
+    password: "{{ rh_password }}"
+    auto_attach: true
+
+- name: enable repositories
+  become: true
+  rhsm_repository:
+    name: "{{ item }}"
+    state: enabled
+  loop:
+    - rhel-8-for-x86_64-appstream-rpms
+    - rhel-8-for-x86_64-baseos-rpms

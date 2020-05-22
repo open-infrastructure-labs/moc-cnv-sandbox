@@ -1,0 +1,18 @@
+---
+- name: check if baremetal interface exists
+  become: true
+  command: >-
+    nmcli con show baremetal
+  register: check_nic_bm
+  failed_when: false
+  changed_when: check_nic_bm.rc != 0
+
+- name: configure baremetal interface
+  when: check_nic_bm is changed
+  become: true
+  shell: |
+    set -e
+    nmcli con down "System {{ prov_nic_baremetal }}" || :
+    nmcli con delete "System {{ prov_nic_baremetal }}" || :
+    nmcli con add ifname baremetal type bridge con-name baremetal
+    nmcli con add type bridge-slave ifname "{{ prov_nic_baremetal }}" master baremetal

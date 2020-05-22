@@ -1,0 +1,27 @@
+---
+- hosts: provisioner
+  tags: prep
+  vars:
+    ansible_user: cloud-user
+  roles:
+    - rh_register
+    - base_packages
+    - libvirt
+    - kni_user
+
+- hosts: provisioner
+  tags: network
+  roles:
+    - role: provisioner/firewall
+      tags: [firewall]
+    - role: provisioner/net_baremetal
+      tags: [net_baremetal]
+    - role: provisioner/net_provision
+      tags: [net_provision]
+
+- hosts: provisioner
+  tags: [installer]
+  gather_facts: false
+  roles:
+    - openshift_installer
+    - rhcos_cache

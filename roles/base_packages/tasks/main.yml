@@ -1,0 +1,6 @@
+---
+- name: install base packages
+  become: true
+  package:
+    name: "{{ base_packages }}"
+    state: installed

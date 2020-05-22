@@ -1,0 +1,20 @@
+[Unit]
+Description=Podman container rhcos_image_cache
+Wants=network.target
+After=network-online.target
+
+[Service]
+Restart={{ podman_restart_policy|default('on-failure') }}
+ExecStartPre=/usr/bin/rm -f %t/%n-pid
+ExecStartPre=-/usr/bin/podman rm -f %n
+ExecStart=/usr/bin/podman run --conmon-pidfile %t/%n-pid --name %n -d \
+	{{ podman_args|default('') }} \
+	{{ podman_image|default('') }} {{ podmange_image_args|default('') }}
+ExecStop=/usr/bin/podman stop -t 10 %n
+ExecStopPost=-/usr/bin/podman rm -f %n
+PIDFile=%t/%n-pid
+KillMode=none
+Type=forking
+
+[Install]
+WantedBy=default.target

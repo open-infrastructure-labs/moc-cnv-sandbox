@@ -1,0 +1,42 @@
+---
+- name: install libvirt
+  become: true
+  package:
+    name: "{{ libvirt_packages }}"
+    state: installed
+
+- name: start libvirtd
+  become: true
+  service:
+    name: libvirtd
+    state: started
+    enabled: true
+
+- name: check if default pool is defined
+  become: true
+  command: >-
+    virsh pool-info default
+  register: pool_check
+  failed_when: false
+  changed_when: pool_check.rc != 0
+
+- name: create default pool
+  become: true
+  command: >-
+    virsh pool-define-as
+      --name default
+      --type dir
+      --target /var/lib/libvirt/images
+  when: pool_check is changed
+
+- name: start default pool
+  become: true
+  command: >-
+    virsh pool-start default
+  when: pool_check is changed
+
+- name: mark pool for autostart
+  become: true
+  command: >-
+    virsh pool-autostart default
+  when: pool_check is changed

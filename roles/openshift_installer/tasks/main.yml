@@ -1,0 +1,48 @@
+---
+- name: copy pull secret to provisioner
+  copy:
+    src: pull-secret.txt
+    dest: /home/kni/pull-secret.txt
+
+- name: get release.txt
+  uri:
+    url: https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{ openshift_release }}/release.txt
+    return_content: true
+  register: release_txt
+
+- name: get installer image name
+  set_fact:
+    release_image: >-
+      {{
+        (
+        release_txt.content.splitlines() |
+        map('regex_search', '^Pull From: .*') |
+        select |
+        list
+        ).0.split().2
+      }}
+
+- name: get oc binary archive
+  get_url:
+    url: https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{ openshift_release }}/openshift-client-linux.tar.gz
+    dest: /home/kni/openshift-clients.tar.gz
+
+- name: extract oc binary
+  become: true
+  become_user: root
+  command: >-
+    tar -x -C /usr/local/bin -f /home/kni/openshift-clients.tar.gz oc
+  args:
+    creates: /usr/local/bin/oc
+
+- name: extract the installer
+  become: true
+  become_user: root
+  command: >-
+    /usr/local/bin/oc adm release extract
+    --registry-config /home/kni/pull-secret.txt
+    --command="openshift-baremetal-install"
+    --to "/usr/local/bin"
+    {{ release_image }}
+  args:
+    creates: /usr/local/bin/openshift-baremetal-install

@@ -1,0 +1,4 @@
+---
+dependencies:
+  - podman
+  - systemd/user
