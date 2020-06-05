@@ -19,8 +19,11 @@ platform:
     ingressVIP: {{ os_vip_ingress }}
     dnsVIP: {{ os_vip_dns }}
     provisioningNetworkInterface: nic2
-    provisioningNetworkCIDR: 172.16.111.0/24
+    provisioningNetworkCIDR: {{ os_prov_cidr }}
     provisioningBridge: provisioning
+{% if os_bootstraposimage is defined %}
+    bootstrapOSImage: "{{ os_bootstraposimage }}"
+{% endif %}
     hosts:
 {% for host in groups.managers %}
       - name: openshift-master-{{ loop.index0 }}

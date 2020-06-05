@@ -8,3 +8,62 @@
   template:
     src: install-config.yaml
     dest: /home/kni/clusterconfigs/install-config.yaml
+
+- name: create hardlink to install-config.yaml
+  file:
+    path: /home/kni/install-config.yaml
+    state: hard
+    src: /home/kni/clusterconfigs/install-config.yaml
+    force: true
+
+- name: create manifests
+  command: >-
+    /usr/local/bin/openshift-baremetal-install --dir ~/clusterconfigs create manifests
+  args:
+    creates: /home/kni/clusterconfigs/manifests
+
+- name: create ignition configs
+  command: >-
+    /usr/local/bin/openshift-baremetal-install --dir ~/clusterconfigs create ignition-configs
+  args:
+    creates: /home/kni/clusterconfigs/bootstrap.ign
+
+- name: create baremetal interface config
+  delegate_to: localhost
+  template:
+    src: ifcfg-baremetal
+    dest: ./ifcfg-baremetal
+
+- name: base64 encode baremetal interface config
+  set_fact:
+    ifcfg_baremetal: "{{ lookup('pipe', 'base64 -w0 ifcfg-baremetal') }}"
+
+- name: generate ignition stanza
+  set_fact:
+    ignition_ifcfg_baremetal:
+      filesystem: root
+      path: /etc/sysconfig/network-scripts/ifcfg-ens3
+      contents:
+        verification: {}
+        source: >-
+          data:text/plain;charset=utf-8;base64,{{ ifcfg_baremetal }}
+      mode: 420
+
+- name: write ifcfg stanza
+  copy:
+    content: "{{ ignition_ifcfg_baremetal | to_nice_json }}"
+    dest: /home/kni/ignition_ifcfg_baremetal.json
+
+- name: create updated ignition configuration
+  command: >-
+    jq -s '.[1] as $net
+    | .[0].storage.files[.[0].storage.files|length]
+    |= . + $net | .[0]'
+    /home/kni/clusterconfigs/bootstrap.ign
+    /home/kni/ignition_ifcfg_baremetal.json
+  register: ign_bootstrap
+
+- name: replace ignition configuration
+  copy:
+    content: "{{ ign_bootstrap.stdout }}"
+    dest: /home/kni/clusterconfigs/bootstrap.ign

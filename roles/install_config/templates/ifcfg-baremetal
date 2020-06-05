@@ -1,0 +1,20 @@
+TYPE=Ethernet
+PROXY_METHOD=none
+BROWSER_ONLY=no
+BOOTPROTO=none
+IPADDR={{ os_vip_bootstrap }}
+PREFIX={{ os_public_cidr|ipaddr('prefix') }}
+DEFROUTE=yes
+IPV4_FAILURE_FATAL=no
+IPV6INIT=yes
+IPV6_AUTOCONF=yes
+IPV6_DEFROUTE=yes
+IPV6_FAILURE_FATAL=no
+IPV6_ADDR_GEN_MODE=stable-privacy
+NAME=baremetal
+DEVICE=ens3
+ONBOOT=yes
+GATEWAY={{ os_public_gw }}
+{% for addr in os_public_dns %}
+DNS{{ loop.index }}={{ addr }}
+{% endfor %}
