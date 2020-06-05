@@ -1,0 +1,88 @@
+---
+- name: open firewall (ports)
+  become: true
+  firewalld:
+    zone: "{{ item }}"
+    port: 5000/tcp
+    state: enabled
+    permanent: true
+  loop:
+    - libvirt
+    - public
+
+- name: install required packages
+  become: true
+  package:
+    name:
+      - python3
+      - podman
+      - httpd
+      - httpd-tools
+      - jq
+    state: installed
+
+- name: ensure registry directories exist
+  file:
+    path: "{{ item }}"
+    state: directory
+  loop:
+    - ~/registry
+    - ~/registry/auth
+    - ~/registry/certs
+    - ~/registry/data
+
+- name: create self-signed certificate
+  command: >-
+    openssl req
+    -newkey rsa:4096 -nodes -sha256 -keyout ~/registry/certs/domain.key
+    -x509 -days 3650 -out ~/registry/certs/domain.crt
+    -subj "/C=US/ST=MA/L=Boston/O=MOC/OU=MOC/CN=provisioner.cnv.massopen.cloud"
+  args:
+    creates: ~/registry/certs/domain.crt
+
+- name: add certificate to ca-trust
+  become: true
+  command: >-
+    cp ./registry/certs/domain.crt /etc/pki/ca-trust/source/anchors/
+  args:
+    creates: /etc/pki/ca-trust/source/anchors/domain.crt
+
+- name: update ca trust
+  become: true
+  command: update-ca-trust
+
+- name: create registry auth file
+  command: >-
+    htpasswd -bBc ~/registry/auth/htpasswd
+    {{ os_registry_user }} {{ os_registry_password }}
+  args:
+    creates: ~/registry/auth/htpasswd
+
+- name: create registry systemd unit
+  include_role:
+    name: podman
+    tasks_from: pod_service_unit.yml
+  vars:
+    podman_unit_file: "/home/kni/.config/systemd/user/registry.service"
+    podman_args: >-
+      -p 5000:5000
+      -e REGISTRY_AUTH=htpasswd
+      -e REGISTRY_AUTH_HTPASSWD_REALM=Registry
+      -e REGISTRY_HTTP_SECRET=ALongRandomSecretForRegistry
+      -e REGISTRY_AUTH_HTPASSWD_PATH=/auth/htpasswd
+      -e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/domain.crt
+      -e REGISTRY_HTTP_TLS_KEY=/certs/domain.key
+      -v /home/kni/registry/data:/var/lib/registry:z
+      -v /home/kni/registry/auth:/auth:z
+      -v /home/kni/registry/certs:/certs:z
+    podman_image: docker.io/library/registry:2
+
+# This should ideally be triggered via a handler in the systemd/user role,
+# but you can't attach "notify" to an include_role task.
+- name: reload systemd
+  command: >-
+    systemctl --user daemon-reload
+
+- name: activate registry service
+  command: >-
+    systemctl --user enable --now registry.service
