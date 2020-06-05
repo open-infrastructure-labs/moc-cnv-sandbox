@@ -38,7 +38,20 @@
   set_fact:
     ifcfg_baremetal: "{{ lookup('pipe', 'base64 -w0 ifcfg-baremetal') }}"
 
-- name: generate ignition stanza
+- name: create ipmi route config
+  delegate_to: localhost
+  copy:
+    content: |
+      ADDRESS0={{ os_ipmi_cidr|ipaddr('address') }}
+      NETMASK0={{ os_ipmi_cidr|ipaddr('netmask') }}
+      GATEWAY={{ os_ipmi_gw }}
+    dest: ./route-baremetal
+
+- name: base64 encode baremetal route config
+  set_fact:
+    route_baremetal: "{{ lookup('pipe', 'base64 -w0 route-baremetal') }}"
+
+- name: generate ignition stanzas
   set_fact:
     ignition_ifcfg_baremetal:
       filesystem: root
@@ -48,19 +61,40 @@
         source: >-
           data:text/plain;charset=utf-8;base64,{{ ifcfg_baremetal }}
       mode: 420
+    ignition_route_baremetal:
+      filesystem: root
+      path: /etc/sysconfig/network-scripts/route-ens3
+      contents:
+        verification: {}
+        source: >-
+          data:text/plain;charset=utf-8;base64,{{ route_baremetal }}
+      mode: 420
 
 - name: write ifcfg stanza
   copy:
     content: "{{ ignition_ifcfg_baremetal | to_nice_json }}"
     dest: /home/kni/ignition_ifcfg_baremetal.json
 
+- name: write route stanza
+  copy:
+    content: "{{ ignition_route_baremetal | to_nice_json }}"
+    dest: /home/kni/ignition_route_baremetal.json
+
+# This is, frankly, ridiculous
 - name: create updated ignition configuration
   command: >-
-    jq -s '.[1] as $net
-    | .[0].storage.files[.[0].storage.files|length]
-    |= . + $net | .[0]'
+    jq -s '
+    .[1] as $ifcfg
+    | .[2] as $route
+    | .[0]
+    | .storage.files[.storage.files|length]
+    |= . + $ifcfg
+    | .storage.files[.storage.files|length]
+    |= . + $route
+    '
     /home/kni/clusterconfigs/bootstrap.ign
     /home/kni/ignition_ifcfg_baremetal.json
+    /home/kni/ignition_route_baremetal.json
   register: ign_bootstrap
 
 - name: replace ignition configuration
