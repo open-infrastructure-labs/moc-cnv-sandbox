@@ -1,0 +1,5 @@
+.facts/
+domain.crt
+domain.key
+ifcfg-baremetal
+route-baremetal
