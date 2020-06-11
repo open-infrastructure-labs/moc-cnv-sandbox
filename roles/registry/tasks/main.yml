@@ -32,13 +32,22 @@
     - ~/registry/data
 
 - name: create self-signed certificate
+  delegate_to: localhost
   command: >-
     openssl req
-    -newkey rsa:4096 -nodes -sha256 -keyout ~/registry/certs/domain.key
-    -x509 -days 3650 -out ~/registry/certs/domain.crt
+    -newkey rsa:4096 -nodes -sha256 -keyout ./domain.key
+    -x509 -days 3650 -out ./domain.crt
     -subj "/C=US/ST=MA/L=Boston/O=MOC/OU=MOC/CN=provisioner.cnv.massopen.cloud"
   args:
-    creates: ~/registry/certs/domain.crt
+    creates: ./domain.crt
+
+- name: copy certificates to remote
+  copy:
+    src: "{{ item }}"
+    dest: "~/registry/certs/{{ item }}"
+  loop:
+    - domain.crt
+    - domain.key
 
 - name: add certificate to ca-trust
   become: true

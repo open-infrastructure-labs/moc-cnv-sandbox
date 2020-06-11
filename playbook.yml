@@ -23,6 +23,7 @@
   tags: [installer]
   gather_facts: false
   roles:
+    - registry
     - openshift_installer
     - rhcos_cache
 
