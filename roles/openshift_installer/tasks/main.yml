@@ -1,14 +1,40 @@
 ---
+- name: read pull-secret.txt
+  set_fact:
+    pull_secret: "{{ lookup('file', 'pull-secret.json') }}"
+
+- name: update pull-secret with local registry credentials
+  set_fact:
+    pull_secret: >-
+      {{
+        pull_secret | combine({
+          "auths": {
+            "provisioner.cnv.massopen.cloud:5000": {
+              "auth": "{}:{}".format(os_registry_user, os_registry_password) | b64encode,
+              "email": "lars@redhat.com"
+            }
+          }
+        }, recursive=true)
+      }}
+
 - name: copy pull secret to provisioner
   copy:
-    src: pull-secret.txt
-    dest: /home/kni/pull-secret.txt
+    content: "{{ pull_secret | to_nice_json }}"
+    dest: /home/kni/pull-secret.json
 
 - name: get release.txt
-  uri:
-    url: https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{ openshift_release }}/release.txt
-    return_content: true
-  register: release_txt
+  delegate_to: localhost
+  tags: [release_txt]
+  command: >-
+    curl -s https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{ openshift_release }}/release.txt
+  register: release_txt_cmd
+
+- set_fact:
+    release_txt:
+      content: "{{ release_txt_cmd.stdout }}"
+
+- debug:
+    var: release_txt
 
 - name: get installer image name
   set_fact:
