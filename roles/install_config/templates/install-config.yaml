@@ -1,7 +1,7 @@
 apiVersion: v1
-baseDomain: {{ os_base_domain }}
+baseDomain: {{ os_base_domain.split('.', 1).1 }}
 metadata:
-  name: {{ os_base_domain }}
+  name: {{ os_base_domain.split('.').0 }}
 networking:
   machineCIDR: {{ os_public_cidr }}
   networkType: OVNKubernetes
@@ -45,5 +45,16 @@ platform:
         bootMACAddress: {{ hostvars[host].provisioning_mac }}
         hardwareProfile: unknown
 {% endfor %}
-pullSecret: '{{ lookup("file", "pull-secret.txt") }}'
-sshKey: '{{ os_public_key }}'
+pullSecret: >-
+  {{ pull_secret | to_json }}
+sshKey: >-
+  {{ os_public_key }}
+imageContentSources:
+- mirrors:
+  - provisioner.cnv.massopen.cloud:5000/ocp4/openshift4
+  source: quay.io/openshift-release-dev/ocp-release
+- mirrors:
+  - provisioner.cnv.massopen.cloud:5000/ocp4/openshift4
+  source: quay.io/openshift-release-dev/ocp-v4.0-art-dev
+additionalTrustBundle: |
+{{ lookup('file', 'domain.crt') | indent(width=2, first=True) }}

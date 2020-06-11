@@ -13,3 +13,7 @@ os_prov_cidr: "172.22.0.0/24"
 os_public_dns:
   - 128.31.24.12
   - 128.31.24.11
+os_ipmi_cidr: 10.0.0.0/19
+os_ipmi_gw: 128.31.28.16
+os_registry_user: openshift
+os_registry_password: openshift

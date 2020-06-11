@@ -1,4 +1,22 @@
 ---
+- name: read pull-secret.txt
+  set_fact:
+    pull_secret: "{{ lookup('file', 'pull-secret.json') }}"
+
+- name: update pull-secret with local registry credentials
+  set_fact:
+    pull_secret: >-
+      {{
+        pull_secret | combine({
+          "auths": {
+            "provisioner.cnv.massopen.cloud:5000": {
+              "auth": "{}:{}".format(os_registry_user, os_registry_password) | b64encode,
+              "email": "lars@redhat.com"
+            }
+          }
+        }, recursive=true)
+      }}
+
 - name: ensure clusterconfigs directory exists
   file:
     path: /home/kni/clusterconfigs
@@ -42,9 +60,9 @@
   delegate_to: localhost
   copy:
     content: |
-      ADDRESS0={{ os_ipmi_cidr|ipaddr('address') }}
+      ADDRESS0={{ os_ipmi_cidr|ipaddr('network') }}
       NETMASK0={{ os_ipmi_cidr|ipaddr('netmask') }}
-      GATEWAY={{ os_ipmi_gw }}
+      GATEWAY0={{ os_ipmi_gw }}
     dest: ./route-baremetal
 
 - name: base64 encode baremetal route config
@@ -55,7 +73,7 @@
   set_fact:
     ignition_ifcfg_baremetal:
       filesystem: root
-      path: /etc/sysconfig/network-scripts/ifcfg-ens3
+      path: /etc/sysconfig/network-scripts/ifcfg-baremetal
       contents:
         verification: {}
         source: >-
@@ -63,7 +81,7 @@
       mode: 420
     ignition_route_baremetal:
       filesystem: root
-      path: /etc/sysconfig/network-scripts/route-ens3
+      path: /etc/sysconfig/network-scripts/route-baremetal
       contents:
         verification: {}
         source: >-
