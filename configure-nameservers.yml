@@ -1,0 +1,15 @@
+---
+- hosts: nameservers
+  become: true
+  pre_tasks:
+    - name: get information about nic2
+      command: nmcli c show "System nic2"
+      register: nic2
+      changed_when: false
+
+    - name: disable nic2
+      command: nmcli c modify 'System nic2' ipv4.method disabled
+      when: nic2.stdout is search('ipv4.method.*(auto|manual)')
+
+  roles:
+    - nameserver

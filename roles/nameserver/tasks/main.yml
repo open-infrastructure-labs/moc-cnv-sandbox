@@ -1,0 +1,32 @@
+---
+- name: install dnsmasq
+  become: true
+  package:
+    name: dnsmasq
+    state: installed
+
+- name: open up firewall
+  firewalld:
+    zone: public
+    service: "{{ item }}"
+    permanent: true
+    immediate: true
+    state: enabled
+  loop:
+    - dhcp
+    - dns
+
+- name: create dnsmasq configuration
+  become: true
+  tags: [template]
+  template:
+    src: dnsmasq.j2.conf
+    dest: /etc/dnsmasq.conf
+  notify: restart dnsmasq
+
+- name: activate dnsmasq service
+  become: true
+  service:
+    name: dnsmasq
+    state: started
+    enabled: true
