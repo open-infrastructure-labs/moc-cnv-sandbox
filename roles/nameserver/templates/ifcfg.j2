@@ -1,0 +1,32 @@
+# Generated with Ansible (manual changes will be lost)
+
+TYPE={{ iface.type|default('Ethernet') }}
+PROXY_METHOD=none
+BROWSER_ONLY=no
+BOOTPROTO={{ iface.bootproto|default('none') }}
+{% if iface.cidr is defined %}
+IPADDR={{ iface.cidr | ipv4('address') }}
+PREFIX={{ iface.cidr | ipv4('prefix') }}
+{% endif %}
+{% if iface.gateway is defined %}
+GATEWAY={{ iface.gateway }}
+{% endif %}
+DEFROUTE={{ iface.defroute|default('yes') }}
+PEERROUTES={{ iface.peerroutes|default('yes') }}
+IPV4_FAILURE_FATAL=no
+IPV6INIT=yes
+IPV6_AUTOCONF=yes
+IPV6_DEFROUTE=yes
+IPV6_FAILURE_FATAL=no
+IPV6_ADDR_GEN_MODE=stable-privacy
+NAME={{ iface.name }}
+DEVICE={{ iface.device }}
+ONBOOT={{ iface.onboot|default('yes') }}
+AUTOCONNECT_PRIORITY=-999
+UUID={{ '{}.{}'.format(iface.name, iface.device)|to_uuid }}
+{% for dns in iface.dns|default([]) %}
+DNS{{ loop.index }}={{ dns }}
+{% endfor %}
+{% if iface.domain is defined %}
+DOMAIN={{ iface.domain }}
+{% endif %}

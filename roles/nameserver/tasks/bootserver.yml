@@ -1,0 +1,99 @@
+---
+- name: install selinux policy module
+  copy:
+    src: local.pp
+    dest: /root/local.pp
+
+- name: activate selinux policy module
+  command: >-
+    semodule -i /root/local.pp
+
+- name: create tftpboot directories
+  file:
+    path: "{{ item }}"
+    state: directory
+  loop:
+    - /srv/tftpboot
+    - /srv/tftpboot/pxelinux
+    - /srv/tftpboot/pxelinux/pxelinux.cfg
+    - /srv/tftpboot/uefi
+    - /srv/tftpboot/images
+    - /srv/tftpboot/images/centos8
+    - /srv/tftpboot/ks
+
+- name: create images symlink
+  file:
+    path: /srv/tftpboot/pxelinux/images
+    state: link
+    src: /srv/tftpboot/images
+
+- name: install apache configuration
+  template:
+    src: apache-tftpboot.conf
+    dest: /etc/httpd/conf.d/tftpboot.conf
+  notify: restart httpd
+
+- name: install kickstart configuration
+  template:
+    src: ks.cfg
+    dest: /srv/tftpboot/ks/ks.cfg
+
+- name: activate httpd
+  service:
+    name: httpd
+    state: started
+    enabled: true
+
+- name: download kernel and initrd
+  tags: [download]
+  get_url:
+    url: "{{ item }}"
+    dest: /srv/tftpboot/images/centos8
+  loop:
+    - "{{ centos_8_kernel_url }}"
+    - "{{ centos_8_initrd_url }}"
+
+- name: copy pxelinux to tftpboot directory
+  command: >-
+    cp /tftpboot/{{ item }} /srv/tftpboot/pxelinux
+  loop:
+    - ldlinux.c32
+    - libcom32.c32
+    - libutil.c32
+    - pxelinux.0
+    - vesamenu.c32
+  args:
+    creates: "/srv/tftpboot/pxelinux/{{ item }}"
+
+- name: copy uefi shim to tftpboot directory
+  command: >-
+    cp /boot/efi/EFI/centos/shimx64.efi /srv/tftpboot/uefi
+  args:
+    creates: /srv/tftpboot/uefi/shimx64.efi
+
+- name: copy grub to tftpboot directory
+  command: >-
+    cp /boot/efi/EFI/centos/grubx64.efi /srv/tftpboot/uefi
+  args:
+    creates: /srv/tftpboot/uefi/grubx64.efi
+
+- name: create selinux contexts
+  tags: [selinux]
+  sefcontext:
+    target: "{{ item }}"
+    setype: tftpdir_t
+    state: present
+  loop:
+    - /srv/tftpboot
+    - /srv/tftpboot/.*
+
+- name: create pxelinux configuration
+  template:
+    src: pxelinux.j2.cfg
+    dest: /srv/tftpboot/pxelinux/pxelinux.cfg/default
+
+- name: restore selinux contexts
+  tags: [selinux]
+  command: >-
+    restorecon -irv /srv/tftpboot
+

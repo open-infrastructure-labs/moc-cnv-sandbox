@@ -1,32 +1,20 @@
 ---
-- name: install dnsmasq
-  become: true
-  package:
-    name: dnsmasq
-    state: installed
+- name: general system configuration
+  tags: [system]
+  import_tasks: system.yml
 
-- name: open up firewall
-  firewalld:
-    zone: public
-    service: "{{ item }}"
-    permanent: true
-    immediate: true
-    state: enabled
-  loop:
-    - dhcp
-    - dns
+- name: general network configuration
+  tags: [net]
+  import_tasks: network.yml
 
-- name: create dnsmasq configuration
-  become: true
-  tags: [template]
-  template:
-    src: dnsmasq.j2.conf
-    dest: /etc/dnsmasq.conf
-  notify: restart dnsmasq
+- name: configure network interfaces
+  tags: [net]
+  import_tasks: interfaces.yml
 
-- name: activate dnsmasq service
-  become: true
-  service:
-    name: dnsmasq
-    state: started
-    enabled: true
+- name: configure network booting
+  tags: [boot]
+  import_tasks: bootserver.yml
+
+- name: configure dnsmasq
+  tags: [dnsmasq]
+  import_tasks: dnsmasq.yml

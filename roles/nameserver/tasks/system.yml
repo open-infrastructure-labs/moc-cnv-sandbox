@@ -1,0 +1,29 @@
+---
+- name: get static hostname
+  command: cat /etc/hostname
+  register: static_hostname
+
+- name: set hostname
+  command: "hostnamectl set-hostname {{ inventory_hostname }}"
+  when: >-
+    ansible_fqdn != inventory_hostname
+    or
+    static_hostname.stdout != inventory_hostname
+
+- name: install packages
+  tags: [packages]
+  become: true
+  package:
+    name: "{{ nameserver_packages }}"
+    state: installed
+  vars:
+    nameserver_packages:
+      - bind-utils
+      - dnsmasq
+      - grub2-efi-x64
+      - httpd
+      - policycoreutils-python-utils
+      - shim-x64
+      - syslinux
+      - syslinux-tftpboot
+      - tcpdump

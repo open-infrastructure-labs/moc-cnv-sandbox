@@ -1,0 +1,3 @@
+---
+centos_8_initrd_url: "http://mirrors.mit.edu/centos/8-stream/BaseOS/x86_64/os/isolinux/initrd.img"
+centos_8_kernel_url: "http://mirrors.mit.edu/centos/8-stream/BaseOS/x86_64/os/isolinux/vmlinuz"
