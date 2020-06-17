@@ -1,0 +1,18 @@
+---
+- name: read install config
+  set_fact:
+    install_config: >-
+      {{
+        lookup('file', 'install-config.yaml') | from_yaml | remove_auth
+      }}
+
+- name: generate configuration summary
+  template:
+    src: summary.j2.md
+    dest: ./summary.md
+  register: summary_md
+
+- name: render summary to html
+  command: >-
+    pandoc --toc -s --title 'Summary' summary.md -o summary.html
+  when: summary_md is changed
