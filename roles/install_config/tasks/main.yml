@@ -60,9 +60,11 @@
   delegate_to: localhost
   copy:
     content: |
-      ADDRESS0={{ os_ipmi_cidr|ipaddr('network') }}
-      NETMASK0={{ os_ipmi_cidr|ipaddr('netmask') }}
-      GATEWAY0={{ os_ipmi_gw }}
+      {% for gw in os_ipmi_gw %}
+      ADDRESS{{loop.index0}}={{ os_ipmi_cidr|ipaddr('network') }}
+      NETMASK{{ loop.index0 }}={{ os_ipmi_cidr|ipaddr('netmask') }}
+      GATEWAY{{ loop.index0 }}={{ gw }}
+      {% endfor %}
     dest: ./route-baremetal
 
 - name: base64 encode baremetal route config

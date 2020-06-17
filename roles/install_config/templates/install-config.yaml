@@ -18,7 +18,7 @@ platform:
     apiVIP: {{ os_vip_api }}
     ingressVIP: {{ os_vip_ingress }}
     dnsVIP: {{ os_vip_dns }}
-    provisioningNetworkInterface: nic2
+    provisioningNetworkInterface: "{{ os_prov_interface }}"
     provisioningNetworkCIDR: {{ os_prov_cidr }}
     provisioningBridge: provisioning
 {% if os_bootstraposimage is defined %}
