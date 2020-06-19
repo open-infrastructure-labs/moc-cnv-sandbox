@@ -6,7 +6,7 @@
 {{ install_config | to_yaml }}
 ```
 
-{% for host in groups.managers + groups.workers %}
+{% for host in groups.bootstrap + groups.managers + groups.workers %}
 ## {{ host }}
 
 ### {{ host }} Interface configuration
