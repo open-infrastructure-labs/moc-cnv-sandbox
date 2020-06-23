@@ -3,3 +3,11 @@
   become: true
   roles:
     - nameserver
+
+- hosts: pxe_clients
+  gather_facts: false
+  tags: [kickstart]
+  tasks:
+    - import_role:
+        name: nameserver
+        tasks_from: pxeconfig
