@@ -1,6 +1,17 @@
 ---
 all:
   children:
+    misc:
+      hosts:
+        lars-boot-test.cnv.massopen.cloud:
+          public_ip: 192.12.185.130/24
+          baremetal_ip: 192.12.185.130/24
+          baremetal_mac: "56:6f:59:6b:00:98"
+          pxe: true
+          ansible_user: root
+          authorized_key_url: 
+            - https://github.com/larsks.keys
+            - https://github.com/naved001.keys
     nameservers:
       hosts:
         dhcp1.cnv.massopen.cloud:
