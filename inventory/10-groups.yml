@@ -3,3 +3,4 @@ plugin: constructed
 strict: false
 groups:
   pxe_clients: "pxe"
+  ipmi_clients: "ipmi_host is defined"
