@@ -1,0 +1,18 @@
+---
+all:
+  children:
+    ilana_provisioner:
+      vars:
+        ansible_user: kni
+      hosts:
+        provisioner.cnv2.massopen.cloud:
+          ipmi_host: 10.0.5.13
+          public_ip: "192.12.185.140/24"
+          baremetal_mac: "00:0f:53:0d:cd:31"
+          provisioning_mac: "00:0f:53:0d:cd:30"
+          pxe: true
+          pxe_tags:
+            - ilana
+          authorized_key_url:
+            - https://github.com/larsks.keys
+            - https://gist.githubusercontent.com/larsks/0ece81f27020328764fa943af046ed18/raw/2eb0f264d2605b313750894d76035e5949bbe58d/ilana%2520public%2520key
