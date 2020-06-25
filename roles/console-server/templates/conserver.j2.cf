@@ -12,7 +12,7 @@ config * {
 
 default * {
 	# The '&' character is substituted with the console name
-	logfile /var/consoles/&;
+	logfile /var/consoles/&.log;
 	# timestamps every hour with activity and break logging
 	timestamp 1hab;
 	# include the 'full' default

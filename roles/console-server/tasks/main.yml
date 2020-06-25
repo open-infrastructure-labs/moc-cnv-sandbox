@@ -52,6 +52,11 @@
     src: conserver.j2.passwd
     dest: /etc/conserver.passwd
 
+- name: install conserver logrotate configuration
+  template:
+    src: logrotate.j2.conf
+    dest: /etc/logrotate.d/conserver
+
 - name: activate conserver
   service:
     name: conserver
