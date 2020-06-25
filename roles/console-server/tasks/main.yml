@@ -1,0 +1,68 @@
+---
+- name: check if conserver copr is enabled
+  command: >-
+    dnf copr list
+  register: copr
+  changed_when: false
+
+- name: enable conserver copr repository
+  command: >-
+    dnf copr enable -y larsks/conserver
+  when: >-
+    "larsks/conserver" not in copr.stdout
+
+- name: install conserver
+  package:
+    name: conserver
+    state: installed
+
+- name: ensure conserver directory exists
+  file:
+    path: /etc/conserver
+    state: directory
+
+- name: install conserver cert and key
+  copy:
+    dest: /etc/conserver/
+    src: "{{ item }}"
+  loop:
+    - ./ca/certs/conserver.crt
+    - ./ca/reqs/conserver.key
+  register: certs
+
+- name: generate combined credentials file
+  shell: >-
+    cat /etc/conserver/conserver.crt /etc/conserver/conserver.key
+    > /etc/conserver/combined.pem
+  when: certs is changed
+
+- name: install ca crt
+  copy:
+    dest: /etc/conserver/ca.crt
+    src: ./ca/ca.crt
+
+- name: install conserver configuration
+  template:
+    src: conserver.j2.cf
+    dest: /etc/conserver.cf
+  notify: restart conserver
+
+- name: install conserver auth configuration
+  template:
+    src: conserver.j2.passwd
+    dest: /etc/conserver.passwd
+
+- name: activate conserver
+  service:
+    name: conserver
+    state: started
+    enabled: true
+
+- name: open firewall for conserver
+  firewalld:
+    port: "{{ item }}"
+    state: enabled
+    permanent: true
+  loop:
+    - "{{ conserver_port }}/tcp"
+    - "{{ conserver_base_port }}-{{ conserver_max_port }}/tcp"

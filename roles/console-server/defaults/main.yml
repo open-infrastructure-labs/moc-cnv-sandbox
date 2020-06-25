@@ -1,0 +1,4 @@
+---
+conserver_port: 782
+conserver_base_port: 40000
+conserver_max_port: "{{ (conserver_base_port|int) + 100 }}"

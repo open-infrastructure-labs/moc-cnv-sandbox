@@ -1,0 +1,42 @@
+# set up global access
+default full	{ rw *; }
+
+config * {
+	sslcredentials /etc/conserver/combined.pem;
+	sslcacertificatefile /etc/conserver/ca.crt;
+	sslreqclientcert yes;
+	sslrequired yes;
+
+	secondaryport {{ conserver_base_port }};
+}
+
+default * {
+	# The '&' character is substituted with the console name
+	logfile /var/consoles/&;
+	# timestamps every hour with activity and break logging
+	timestamp 1hab;
+	# include the 'full' default
+	include full;
+	# master server is localhost
+	master localhost;
+}
+
+default ipmi_base {
+	type ipmi;
+	username {{ os_ipmi_user }};
+	password {{ os_ipmi_password }};
+}
+
+{% for host in groups.openshift %}
+console {{ host.split('.').0 }} {
+	include ipmi_base;
+	host {{ hostvars[host].ipmi_host }};
+}
+
+{% endfor %}
+
+# list of clients we allow
+access * {
+	allowed 0.0.0.0/0;
+	trusted 0.0.0.0/0;
+}

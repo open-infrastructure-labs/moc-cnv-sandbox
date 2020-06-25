@@ -1,0 +1,25 @@
+---
+- hosts: localhost
+  tags: [ca]
+  roles:
+    - certificate-authority
+
+- hosts: localhost
+  tags: [certs]
+  tasks:
+    - name: generate certificates
+      include_role:
+        name: certificate-authority
+        tasks_from: certificate
+      loop:
+        - conserver
+        - lars
+        - naved
+      loop_control:
+        loop_var: crt_name
+
+- hosts: nameservers[0]
+  tags: [conserver]
+  become: true
+  roles:
+    - console-server

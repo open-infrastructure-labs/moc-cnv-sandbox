@@ -1,0 +1,5 @@
+---
+- name: restart conserver
+  service:
+    name: conserver
+    state: restarted
