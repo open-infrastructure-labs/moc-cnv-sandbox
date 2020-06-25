@@ -1,0 +1,10 @@
+---
+- hosts: provisioner:openshift
+  gather_facts: false
+  become: true
+  tasks:
+    - authorized_key:
+        user: "{{ ansible_user }}"
+        state: present
+        key: "{{ item }}"
+      loop: "{{ os_authorized_keys }}"
