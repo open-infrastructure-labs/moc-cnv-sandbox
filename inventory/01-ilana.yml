@@ -2,6 +2,9 @@
 all:
   children:
     ilana:
+      vars:
+        pxe_tags:
+          - ilana
       children:
         ilana_provisioner:
           vars:
@@ -13,8 +16,35 @@ all:
               baremetal_mac: "00:0f:53:0d:cd:31"
               provisioning_mac: "00:0f:53:0d:cd:30"
               pxe: true
-              pxe_tags:
-                - ilana
               authorized_key_url:
                 - https://github.com/larsks.keys
                 - https://gist.githubusercontent.com/larsks/0ece81f27020328764fa943af046ed18/raw/2eb0f264d2605b313750894d76035e5949bbe58d/ilana%2520public%2520key
+        ilana_openshift:
+          vars:
+            ansible_user: core
+          hosts:
+            openshift-master-0.cnv2.massopen.cloud:
+              ipmi_host: 10.0.15.2
+              public_ip: 192.12.185.145
+              baremetal_mac: d4:ae:52:94:d5:a5
+              provisioning_mac: d4:ae:52:94:d5:a3
+            openshift-master-1.cnv2.massopen.cloud:
+              ipmi_host: 10.0.17.36
+              public_ip: 192.12.185.146
+              baremetal_mac: d4:ae:52:98:15:0f
+              provisioning_mac: d4:ae:52:98:15:0d
+            openshift-master-2.cnv2.massopen.cloud:
+              ipmi_host: 10.0.3.6
+              public_ip: 192.12.185.147
+              baremetal_mac: 90:b1:1c:21:af:4a
+              provisioning_mac: 90:b1:1c:21:af:48
+            openshift-worker-0.cnv2.massopen.cloud:
+              ipmi_host: 10.0.3.5
+              public_ip: 192.12.185.148
+              baremetal_mac: d4:ae:52:98:22:27
+              provisioning_mac: d4:ae:52:98:22:25
+            openshift-worker-1.cnv2.massopen.cloud:
+              ipmi_host: 10.0.17.38
+              public_ip: 192.12.185.149
+              baremetal_mac: 90:b1:1c:21:96:3b
+              provisioning_mac: 90:b1:1c:21:96:39
