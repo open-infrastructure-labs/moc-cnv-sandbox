@@ -26,8 +26,8 @@
     dest: /etc/conserver/
     src: "{{ item }}"
   loop:
-    - ./ca/certs/conserver.crt
-    - ./ca/reqs/conserver.key
+    - "{{ ca_dir }}/certs/conserver.crt"
+    - "{{ ca_dir }}/reqs/conserver.key"
   register: certs
 
 - name: generate combined credentials file
