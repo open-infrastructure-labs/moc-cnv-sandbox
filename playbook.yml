@@ -1,34 +1,49 @@
 ---
+
+# Perform some basic setup of the provisioning host:
+#
+# - Subscribe the system to RHN
+# - Install required pacakges
+# - Configure libvirt
+# - Create the kni user that will be used for subsequent connections
 - hosts: provisioner
   tags: prep
   vars:
     ansible_user: cloud-user
+  become: true
   roles:
-    - rh_register
-    - base_packages
-    - libvirt
-    - kni_user
+    - role: rh_register
+      tags: [rhn]
+    - role: base_packages
+      tags: [packages]
+    - role: libvirt
+      tags: [libvirt]
+    - role: kni_user
+      tags: [kni]
 
+# Configure firewall and network interfaces on the provisioning host.
 - hosts: provisioner
-  tags: network
+  tags: net
+  become: true
   roles:
     - role: provisioner/firewall
       tags: [firewall]
     - role: provisioner/net_baremetal
-      tags: [net_baremetal]
+      tags: [net.baremetal]
     - role: provisioner/net_provision
-      tags: [net_provision]
+      tags: [net.provision]
 
+# Install the openshift installer and set up support services
+# (the image cache and local registry mirror).
 - hosts: provisioner
   tags: [installer]
-  gather_facts: false
   roles:
     - registry
     - openshift_installer
     - rhcos_cache
 
+# Generate the install_config.yaml
 - hosts: provisioner
   tags: [install_config]
-  gather_facts: false
   roles:
     - install_config
