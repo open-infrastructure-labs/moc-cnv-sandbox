@@ -1,6 +1,5 @@
 ---
 - name: open firewall (services)
-  become: true
   firewalld:
     zone: public
     service: "{{ item }}"
@@ -9,7 +8,6 @@
   loop: "{{ provisioner_services }}"
 
 - name: open firewall (ports)
-  become: true
   firewalld:
     zone: public
     port: "{{ item }}"

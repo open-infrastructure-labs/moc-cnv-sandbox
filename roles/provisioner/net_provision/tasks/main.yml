@@ -1,6 +1,5 @@
 ---
 - name: check if provisioning interface exists
-  become: true
   command: >-
     nmcli con show provisioning
   register: check_nic_prov
@@ -9,7 +8,6 @@
 
 - name: configure provisioning interface
   when: check_nic_prov is changed
-  become: true
   shell: |
     set -e
     nmcli con down "System {{ prov_nic_provision }}" || :

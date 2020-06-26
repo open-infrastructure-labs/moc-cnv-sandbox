@@ -1,6 +1,5 @@
 ---
 - name: register system with redhat
-  become: true
   redhat_subscription:
     state: present
     username: "{{ rh_username }}"
@@ -9,7 +8,6 @@
     pool_ids: "{{ rh_pools }}"
 
 - name: enable repositories
-  become: true
   rhsm_repository:
     name: "{{ item }}"
     state: enabled
