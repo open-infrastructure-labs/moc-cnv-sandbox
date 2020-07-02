@@ -1,0 +1,6 @@
+---
+ca_dir: ./ca
+
+conserver_user_certs:
+  - lars
+  - naved
