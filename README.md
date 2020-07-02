@@ -44,4 +44,6 @@ Configuration and documentation for the [CNV][] Sandbox at the [Mass Open Cloud]
 
 ## See also
 
-- [Networking with nmstate](https://docs.openshift.com/container-platform/4.4/cnv/cnv_node_network/cnv-observing-node-network-state.html)
+- [Getting started with OpenShift and CNV](https://gitlab.com/open-infrastructure-labs/moc-cnv-sandbox/-/tree/docs)
+
+  (Available in the `docs` branch of this repository)
