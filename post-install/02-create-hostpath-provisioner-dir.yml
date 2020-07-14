@@ -9,6 +9,10 @@ spec:
   config:
     ignition:
       version: 2.2.0
+    directories:
+      - filesystem: root
+        path: /srv/local-storage
+        mode: 493
     systemd:
       units:
         - contents: |
