@@ -1,5 +1,5 @@
 ---
-- name: read pull-secret.txt
+- name: read pull-secret.json
   set_fact:
     pull_secret: "{{ lookup('file', 'pull-secret.json') }}"
 
@@ -52,6 +52,18 @@
   get_url:
     url: https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{ openshift_release }}/openshift-client-linux.tar.gz
     dest: /home/kni/openshift-clients.tar.gz
+    force: true
+  register: oc
+
+- name: delete old binaries
+  when: oc is changed
+  become: true
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /usr/local/bin/oc
+    - /usr/local/bin/openshift-baremetal-install
 
 - name: extract oc binary
   become: true
@@ -66,7 +78,7 @@
   become_user: root
   command: >-
     /usr/local/bin/oc adm release extract
-    --registry-config /home/kni/pull-secret.txt
+    --registry-config /home/kni/pull-secret.json
     --command="openshift-baremetal-install"
     --to "/usr/local/bin"
     {{ release_image }}
