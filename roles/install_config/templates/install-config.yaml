@@ -26,7 +26,7 @@ platform:
 {% endif %}
     hosts:
 {% for host in groups.managers %}
-      - name: openshift-master-{{ loop.index0 }}
+      - name: os-mgr-{{ loop.index0 }}
         role: master
         bmc:
           address: ipmi://{{ hostvars[host].ipmi_host }}
@@ -36,7 +36,7 @@ platform:
         hardwareProfile: default
 {% endfor %}
 {% for host in groups.workers %}
-      - name: openshift-worker-{{ loop.index0 }}
+      - name: os-wrk-{{ loop.index0 }}
         role: worker
         bmc:
           address: ipmi://{{ hostvars[host].ipmi_host }}

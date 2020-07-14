@@ -52,34 +52,34 @@ all:
       children:
         managers:
           hosts:
-            openshift-master-0.cnv.massopen.cloud:
+            os-mgr-0.cnv.massopen.cloud:
               ipmi_host: "10.0.17.34"
               public_ip: "192.12.185.110/24"
               provisioning_mac: "00:0f:53:0d:7b:84"
               baremetal_mac: "00:0f:53:0d:7b:85"
-            openshift-master-1.cnv.massopen.cloud:
+            os-mgr-1.cnv.massopen.cloud:
               ipmi_host: "10.0.3.13"
               public_ip: "192.12.185.111/24"
               provisioning_mac: "00:0f:53:0c:46:a0"
               baremetal_mac: "00:0f:53:0c:46:a1"
-            openshift-master-2.cnv.massopen.cloud:
+            os-mgr-2.cnv.massopen.cloud:
               ipmi_host: "10.0.5.12"
               public_ip: "192.12.185.112/24"
               provisioning_mac: "00:0f:53:0d:b3:1c"
               baremetal_mac: "00:0f:53:0d:b3:1d"
         workers:
           hosts:
-            openshift-worker-0.cnv.massopen.cloud:
+            os-wrk-0.cnv.massopen.cloud:
               ipmi_host: "10.0.17.39"
               public_ip: "192.12.185.115/24"
               provisioning_mac: "00:0f:53:0d:f7:28"
               baremetal_mac: "00:0f:53:0d:f7:29"
-            openshift-worker-1.cnv.massopen.cloud:
+            os-wrk-1.cnv.massopen.cloud:
               ipmi_host: "10.0.3.12"
               public_ip: "192.12.185.116/24"
               provisioning_mac: "00:0f:53:0d:b3:40"
               baremetal_mac: "00:0f:53:0d:b3:41"
-            openshift-worker-2.cnv.massopen.cloud:
+            os-wrk-2.cnv.massopen.cloud:
               ipmi_host: "10.0.17.35"
               public_ip: "192.12.185.117/24"
               provisioning_mac: "00:0f:53:0c:45:78"
