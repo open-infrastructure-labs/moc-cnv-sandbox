@@ -1,4 +1,6 @@
 ---
 - hosts: localhost
+  environment:
+    KUBECONFIG: ./kubeconfig
   roles:
     - default-ingress-cert
