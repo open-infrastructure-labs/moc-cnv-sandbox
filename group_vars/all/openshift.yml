@@ -20,3 +20,5 @@ os_ipmi_gw:
   - 192.12.185.102
 os_registry_user: openshift
 os_registry_password: openshift
+os_ingress_cert: ./certs/api.cnv.massopen.cloud.crt
+os_ingress_cert_key: ./certs/api.cnv.massopen.cloud.key

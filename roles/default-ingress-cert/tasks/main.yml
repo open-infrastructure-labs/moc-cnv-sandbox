@@ -1,0 +1,30 @@
+---
+- name: check if certificate exists
+  command: >-
+    oc get secret -n openshift-ingress default-ingress-certificate
+  register: cert
+  changed_when: cert.rc != 0
+  failed_when: false
+
+- name: create certificate
+  when: cert is changed
+  command: >-
+    oc create secret tls default-ingress-certificate
+    --cert={{ os_ingress_cert }}
+    --key={{ os_ingress_cert_key }}
+    -n openshift-ingress
+
+- name: get ingress configuration
+  command: >-
+    oc get -n openshift-ingress-operator
+    ingresscontroller.operator default -o json
+  register: ingress_config
+  changed_when: false
+
+- name: update ingress controller configuration
+  command: >-
+    oc patch ingresscontroller.operator default
+    --type=merge -p
+    '{"spec":{"defaultCertificate": {"name": "default-ingress-certificate"}}}'
+    -n openshift-ingress-operator
+  when: not (ingress_config.stdout|from_json)|json_query('spec.defaultCertificate')
