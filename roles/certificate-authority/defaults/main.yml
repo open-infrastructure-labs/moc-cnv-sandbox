@@ -1,0 +1,10 @@
+---
+ca_base_serial: 1000
+ca_key_bits: 4096
+ca_subject: /CN=conserver-ca
+ca_default_duration: 3650
+ca_default_crl_days: 30
+ca_default_md: sha256
+
+crt_bits: 4096
+crt_subject: "/CN={{ crt_name }}"

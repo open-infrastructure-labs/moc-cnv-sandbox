@@ -1,0 +1,24 @@
+---
+- name: generate key for {{ crt_name }}
+  command: >-
+    openssl genrsa -out "{{ ca_dir }}/reqs/{{ crt_name }}.key" {{ crt_bits }}
+  args:
+    creates: "{{ ca_dir }}/reqs/{{ crt_name }}.key"
+
+- name: generate certificate request for {{ crt_name }} ({{ crt_subject }})
+  command: >-
+    openssl req -new
+    -subj "{{ crt_subject }}"
+    -key "{{ ca_dir }}/reqs/{{ crt_name }}.key"
+    -out "{{ ca_dir }}/reqs/{{ crt_name }}.req"
+  args:
+    creates: "{{ ca_dir }}/reqs/{{ crt_name }}.req"
+
+- name: sign certificate request for {{ crt_name }}
+  command: >-
+    openssl ca -batch
+    -config "{{ ca_dir }}/ca.conf"
+    -out "{{ ca_dir }}/certs/{{ crt_name }}.crt"
+    -infiles "{{ ca_dir }}/reqs/{{ crt_name }}.req"
+  args:
+    creates: "{{ ca_dir }}/certs/{{ crt_name }}.crt"

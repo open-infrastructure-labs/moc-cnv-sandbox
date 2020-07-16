@@ -1,0 +1,52 @@
+---
+- name: verify that ca_dir is defined
+  fail:
+    msg: "You must set ca_dir"
+  when: ca_dir is not defined
+
+- name: create ca directories
+  file:
+    path: "{{ item }}"
+    state: directory
+  loop:
+    - "{{ ca_dir }}"
+    - "{{ ca_dir }}/certs"
+    - "{{ ca_dir }}/reqs"
+
+- name: initialize ca serial
+  copy:
+    dest: "{{ ca_dir }}/serial"
+    content: "{{ ca_base_serial }}"
+    force: false
+
+- name: initialize ca database
+  copy:
+    dest: "{{ ca_dir }}/index"
+    content: ""
+    force: false
+
+- name: install ca key
+  copy:
+    dest: "{{ ca_dir }}/ca.key"
+    content: "{{ ca_key }}"
+  when: ca_key is defined
+
+- name: generate ca key
+  command: >-
+    openssl genrsa -out "{{ ca_dir }}/ca.key" {{ ca_key_bits }}
+  args:
+    creates: "{{ ca_dir }}/ca.key"
+
+- name: generate ca certificate
+  command: >-
+    openssl req -new -x509
+    -subj "{{ ca_subject }}"
+    -key "{{ ca_dir }}/ca.key"
+    -out "{{ ca_dir }}/ca.crt"
+  args:
+    creates: "{{ ca_dir }}/ca.crt"
+
+- name: generate ca configuration
+  template:
+    src: ca.j2.conf
+    dest: "{{ ca_dir }}/ca.conf"
