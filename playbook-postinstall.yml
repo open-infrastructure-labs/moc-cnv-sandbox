@@ -24,6 +24,8 @@
       tags: [tls]
     - role: ocp/openid
       tags: [openid]
+    - role: ocp/authz
+      tags: [authz]
     - role: ocp/cnv
       tags: [cnv]
     - role: ocp/lso

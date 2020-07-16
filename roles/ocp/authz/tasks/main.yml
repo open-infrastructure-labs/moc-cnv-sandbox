@@ -1,0 +1,27 @@
+---
+- name: ensure authorized_provisioners group exists
+  k8s:
+    state: present
+    definition:
+      apiVersion: user.openshift.io/v1
+      kind: Group
+      metadata:
+        name: authorized-provisioners
+      users: []
+
+- name: require membership in authorized_provisioners for self-provisioner role
+  k8s:
+    state: present
+    definition:
+      apiVersion: rbac.authorization.k8s.io/v1
+      kind: ClusterRoleBinding
+      metadata:
+        name: self-provisioners
+      roleRef:
+        apiGroup: rbac.authorization.k8s.io
+        kind: ClusterRole
+        name: self-provisioner
+      subjects:
+        - apiGroup: rbac.authorization.k8s.io
+          kind: Group
+          name: authorized-provisioners
