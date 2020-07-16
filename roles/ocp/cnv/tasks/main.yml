@@ -1,0 +1,47 @@
+---
+- name: ensure openshift-cnv namespace exists
+  k8s:
+    name: openshift-cnv
+    kind: Namespace
+    state: present
+    api_version: v1
+
+- name: ensure openshift-cnv operator group exists
+  k8s:
+    state: present
+    definition:
+      apiVersion: operators.coreos.com/v1
+      kind: OperatorGroup
+      metadata:
+        name: cnv-operator-group
+        namespace: openshift-cnv
+      spec:
+        targetNamespaces:
+          - openshift-cnv
+
+- name: subscribe to cnv operator
+  k8s:
+    state: present
+    definition:
+      apiVersion: operators.coreos.com/v1alpha1
+      kind: Subscription
+      metadata:
+        name: kubevirt-hyperconverged
+        namespace: openshift-cnv
+      spec:
+        channel: "{{ cnv_channel_version|string }}"
+        installPlanApproval: Automatic
+        name: kubevirt-hyperconverged
+        source: redhat-operators
+        sourceNamespace: openshift-marketplace
+
+- name: create cnv operator deployment
+  k8s:
+    state: present
+    definition:
+      apiVersion: hco.kubevirt.io/v1alpha1
+      kind: HyperConverged
+      metadata:
+        name: kubevirt-hyperconverged
+        namespace: openshift-cnv
+      spec: {}

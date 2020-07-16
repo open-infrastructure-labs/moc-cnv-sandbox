@@ -1,0 +1,2 @@
+# Identify rotational drive
+SUBSYSTEM=="block",ATTR{size}=="1170997248", SYMLINK+="lso0"

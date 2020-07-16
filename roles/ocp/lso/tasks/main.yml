@@ -1,0 +1,58 @@
+---
+- name: ensure local-storage namespace exists
+  k8s:
+    name: local-storage
+    kind: Namespace
+    state: present
+    api_version: v1
+
+- name: ensure local-storage operator group exists
+  k8s:
+    state: present
+    definition:
+      apiVersion: operators.coreos.com/v1
+      kind: OperatorGroup
+      metadata:
+        name: local-storage-operator-group
+        namespace: local-storage
+      spec:
+        targetNamespaces:
+          - local-storage
+
+- name: subscribe to lso operator
+  k8s:
+    state: present
+    definition:
+      apiVersion: operators.coreos.com/v1alpha1
+      kind: Subscription
+      metadata:
+        name: local-storage-operator
+        namespace: local-storage
+      spec:
+        channel: "{{ lso_channel_version|string }}"
+        installPlanApproval: Automatic
+        name: local-storage-operator
+        source: redhat-operators
+        sourceNamespace: openshift-marketplace
+
+- name: create lso udev rules
+  k8s:
+    state: present
+    definition:
+      apiVersion: machineconfiguration.openshift.io/v1
+      kind: MachineConfig
+      metadata:
+        name: 60-lso-udev-rules
+        labels:
+          machineconfiguration.openshift.io/role: worker
+      spec:
+        config:
+          ignition:
+            version: 2.2.0
+          storage:
+            files:
+              - filesystem: root
+                path: /etc/udev/rules.d/60-lso-udev.rules
+                contents:
+                  source: "{{ lookup('file', '60-lso-udev.rules') | ignition_encode }}"
+                mode: 0644

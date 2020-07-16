@@ -1,0 +1,30 @@
+---
+- hosts: provisioner
+  become: true
+  tags: [fetch]
+  tasks:
+    - name: get install-config
+      fetch:
+        src: /home/kni/install-config.yaml
+        dest: install-config.yaml
+        flat: true
+
+    - name: get kubeconfig
+      fetch:
+        src: /home/kni/clusterconfigs/auth/kubeconfig
+        dest: kubeconfig
+        flat: true
+
+- hosts: localhost
+  tags: [ocp]
+  environment:
+    KUBECONFIG: ./kubeconfig
+  roles:
+    - role: ocp/default-ingress-certificate
+      tags: [tls]
+    - role: ocp/openid
+      tags: [openid]
+    - role: ocp/cnv
+      tags: [cnv]
+    - role: ocp/lso
+      tags: [lso]

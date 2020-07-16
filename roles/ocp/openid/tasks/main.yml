@@ -1,0 +1,40 @@
+---
+- name: create openid client secret
+  k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      data:
+        clientSecret: "{{ os_openid_client_secret|b64encode }}"
+      kind: Secret
+      metadata:
+        name: moc-sso-client-secret
+        namespace: openshift-config
+      type: Opaque
+
+- name: create moc sso oauth configuration
+  k8s:
+    state: present
+    definition:
+      apiVersion: config.openshift.io/v1
+      kind: OAuth
+      metadata:
+        name: cluster
+      spec:
+        identityProviders:
+          - mappingMethod: claim
+            name: moc-sso
+            openID:
+              claims:
+                email:
+                - email
+                name:
+                - name
+                preferredUsername:
+                - preferred_username
+              clientID: moc-openshift-cnv
+              clientSecret:
+                name: moc-sso-client-secret
+              extraScopes: []
+              issuer: https://sso.massopen.cloud/auth/realms/moc
+            type: OpenID

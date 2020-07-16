@@ -1,0 +1,27 @@
+---
+- name: create tls secret
+  k8s:
+    state: present
+    definition:
+      kind: Secret
+      apiVersion: v1
+      metadata:
+        name: default-ingress-certificate
+        namespace: openshift-ingress
+      data:
+        tls.crt: "{{ (lookup('file', os_ingress_cert) + '\n')|b64encode }}"
+        tls.key: "{{ (lookup('file', os_ingress_cert_key) + '\n')|b64encode }}"
+      type: kubernetes.io/tls
+
+- name: configure ingress controller
+  k8s:
+    state: present
+    definition:
+      apiVersion: operator.openshift.io/v1
+      kind: IngressController
+      metadata:
+        name: default
+        namespace: openshift-ingress-operator
+      spec:
+        defaultCertificate:
+          name: default-ingress-certificate
