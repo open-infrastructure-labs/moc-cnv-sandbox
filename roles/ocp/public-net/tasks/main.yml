@@ -1,0 +1,26 @@
+---
+- name: create public network bridge
+  k8s:
+    state: present
+    definition:
+      apiVersion: nmstate.io/v1alpha1
+      kind: NodeNetworkConfigurationPolicy
+      metadata:
+        name: br-public-policy
+      spec:
+        nodeSelector:
+          node-role.kubernetes.io/worker: ""
+        desiredState:
+          interfaces:
+            - name: br-public
+              type: linux-bridge
+              state: up
+              ipv4:
+                dhcp: true
+                enabled: true
+              bridge:
+                options:
+                  stp:
+                    enabled: false
+                port:
+                  - name: enp4s0f1np1

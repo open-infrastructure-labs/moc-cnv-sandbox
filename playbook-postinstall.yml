@@ -28,5 +28,7 @@
       tags: [authz]
     - role: ocp/cnv
       tags: [cnv]
+    - role: ocp/public-net
+      tags: net
     - role: ocp/lso
       tags: [lso]
