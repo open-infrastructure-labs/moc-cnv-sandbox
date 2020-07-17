@@ -1,4 +1,34 @@
 ---
+- name: create udev rules to manage nic names on problem nodes
+  k8s:
+    state: present
+    definition:
+      apiVersion: machineconfiguration.openshift.io/v1
+      kind: MachineConfig
+      metadata:
+        name: 50-br-public-nic-name
+        labels:
+          machineconfiguration.openshift.io/role: worker
+      spec:
+        config:
+          ignition:
+            version: 2.2.0
+          storage:
+            files:
+              - filesystem: root
+                path: /etc/udev/rules.d/50-br-public-nic-name.rules
+                contents:
+                  source: "{{ lookup('file', '50-br-public-nic-name.rules') | ignition_encode }}"
+                mode: 0644
+  register: machineconfig
+
+- include_role:
+    name: ocp/machineconfig
+    tasks_from: waitforupdate.yml
+  vars:
+    machineconfig_result: "{{ machineconfig }}"
+    machineconfig_pool: worker
+
 - name: create public network bridge
   k8s:
     state: present

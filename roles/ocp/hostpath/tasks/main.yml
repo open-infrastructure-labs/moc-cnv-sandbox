@@ -31,30 +31,12 @@
                 name: hostpath-provisioner.service
   register: machineconfig
 
-- name: wait for machineconfig update to start
-  when: machineconfig is changed
-  k8s_info:
-    api_version: machineconfiguration.openshift.io/v1
-    kind: machineconfigpool
-    name: worker
-  register: worker
-  until: >-
-    worker.resources.0.status.conditions[-1].type == "Updating" and
-    worker.resources.0.status.conditions[-1].status == "True"
-  delay: 10
-  retries: 3
-
-- name: wait for machineconfig update to complete
-  k8s_info:
-    api_version: machineconfiguration.openshift.io/v1
-    kind: machineconfigpool
-    name: worker
-  register: worker
-  until: >-
-    worker.resources.0.status.conditions[-1].type == "Updating" and
-    worker.resources.0.status.conditions[-1].status == "False"
-  delay: 10
-  retries: 180
+- include_role:
+    name: ocp/machineconfig
+    tasks_from: waitforupdate.yml
+  vars:
+    machineconfig_result: "{{ machineconfig }}"
+    machineconfig_pool: worker
 
 - name: create hostpath provisioner deployment
   k8s:

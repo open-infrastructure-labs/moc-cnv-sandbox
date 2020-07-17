@@ -1,0 +1,25 @@
+---
+- name: wait for machineconfig update to start
+  when: machineconfig_result is changed
+  k8s_info:
+    api_version: machineconfiguration.openshift.io/v1
+    kind: machineconfigpool
+    name: "{{ machineconfig_pool }}"
+  register: mcupdate
+  until: >-
+    mcupdate.resources.0.status.conditions[-1].type == "Updating" and
+    mcupdate.resources.0.status.conditions[-1].status == "True"
+  delay: 10
+  retries: 3
+
+- name: wait for machineconfig update to complete
+  k8s_info:
+    api_version: machineconfiguration.openshift.io/v1
+    kind: machineconfigpool
+    name: "{{ machineconfig_pool }}"
+  register: mcupdate
+  until: >-
+    mcupdate.resources.0.status.conditions[-1].type == "Updating" and
+    mcupdate.resources.0.status.conditions[-1].status == "False"
+  delay: 10
+  retries: 180

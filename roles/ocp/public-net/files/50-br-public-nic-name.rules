@@ -1,0 +1,2 @@
+# Ensure interface name matches expectations for br-public
+SUBSYSTEM=="net", KERNEL=="enp5s0f1np1", NAME="enp4s0f1np1"
