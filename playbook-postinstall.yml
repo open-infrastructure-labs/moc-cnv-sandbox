@@ -32,3 +32,5 @@
       tags: net
     - role: ocp/lso
       tags: [lso]
+    - role: ocp/hostpath
+      tags: [hostpath]
