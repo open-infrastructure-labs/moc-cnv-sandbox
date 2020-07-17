@@ -1,0 +1,107 @@
+# This playbook interacts with the Dell PERC H710p RAID controller to create
+# and delete a virtual disk for the rotational drive on the worker nodes.
+#
+# See [1] for lots of examples of interacting with Dell's Redfish API.
+#
+# This playbook uses `command` tasks rather than the `uri` module because
+# Ansible seems to have problems accessing HTTP endpoints via a SOCKS5
+# proxy.
+#
+# [1]: https://github.com/dell/iDRAC-Redfish-Scripting/tree/master/Redfish%20Python
+---
+- hosts: workers
+  gather_facts: false
+  vars:
+    baseuri: https://{{ ipmi_host }}
+    vd_action: check
+    curl: "curl -sfk -u {{ os_ipmi_user }}:{{ os_ipmi_password }}"
+  tasks:
+    - name: get raid controller
+      delegate_to: localhost
+      command: >-
+        {{ curl }}
+        "{{ baseuri }}/redfish/v1/Systems/System.Embedded.1/Storage/RAID.Integrated.1-1"
+      register: raid
+
+    # I'm assuming there are only two drives on the system (one SSD and one HD).
+    # If we find a different number of drives, bail out because who knows
+    # what is going on.
+    - name: validate number of drives
+      fail:
+        msg: "Too many drives!"
+      when: "(raid.stdout|from_json).Drives|length != 2"
+
+    # Get details for each drive attached to the raid controller.
+    - name: get drives
+      delegate_to: localhost
+      command: >-
+        {{ curl }} "{{ baseuri }}{{ item['@odata.id'] }}"
+      loop: "{{ (raid.stdout|from_json).Drives }}"
+      register: drives_raw
+
+    # Because of the loop in the previous task, we end up with embedded JSON
+    # in the stdout attribute. This task parses stdout from the previous
+    # tasks to create an actual list of dictionaries.
+    - name: build list of drives
+      set_fact:
+        drives: "{{ drives_raw.results | map(attribute='stdout') | map('from_json') | list }}"
+
+    # Figure out which device is the ssd and which is the hd.
+    - name: find drives by type
+      set_fact:
+        hdd_device: "{{ (drives | json_query('[?MediaType == `HDD`]')).0 }}"
+        ssd_device: "{{ (drives | json_query('[?MediaType == `SSD`]')).0 }}"
+
+    - name: determine which drives are part of vdisks
+      set_fact:
+        hdd_in_vd: "{{ hdd_device.Links.Volumes|length > 0 }}"
+        ssd_in_vd: "{{ ssd_device.Links.Volumes|length > 0 }}"
+
+    - name: display device information
+      when: vd_action == 'check'
+      debug:
+        msg:
+          - "SSD [{{ ssd_in_vd }}]: {{ ssd_device['@odata.id'] }}"
+          - "HD [{{ hdd_in_vd }}]: {{ hdd_device['@odata.id'] }}"
+
+    - when: vd_action == 'create' and not hdd_in_vd
+      block:
+
+        - name: create hd vdisk
+          delegate_to: localhost
+          command: >-
+            {{ curl }} -d@-
+            "{{ baseuri }}/redfish/v1/Systems/System.Embedded.1/Storage/RAID.Integrated.1-1/Volumes"
+          args:
+            stdin: "{{ newdrive|to_nice_json }}"
+          vars:
+            # This is a bit of a hack to work around some weird
+            # Ansible behavior. If we were to include a literal JSON
+            # string as the value of the 'stdin' attribute, Ansible
+            # would deserialize it and then dump the Python data
+            # structure (which would result in something that wasn't
+            # JSON). By using this layer of indirection we avoid that
+            # problem.
+            newdrive:
+              VolumeType: NonRedundant
+              Name: data
+              Drives:
+                - "@odata.id": "{{ hdd_device['@odata.id'] }}"
+          register: create
+
+        - name: display result of create operation
+          debug:
+            var: create
+
+    - when: vd_action == 'delete' and hdd_in_vd
+      block:
+        - name: delete hd vdisk
+          delegate_to: localhost
+          command: >-
+            {{ curl }} -X DELETE
+            "{{ baseuri }}{{ hdd_device.Links.Volumes.0['@odata.id'] }}"
+          register: delete
+
+        - name: disable result of delete operation
+          debug:
+            var: delete
