@@ -40,6 +40,7 @@
 # is inspecting the output of `lsblk` rather than just doing what the
 # operator requested).
 - name: create lso udev rules
+  when: false
   k8s:
     state: present
     definition:
@@ -62,6 +63,7 @@
                 mode: 0644
 
 - name: create local storage provisioner
+  when: lso_devices is defined
   k8s:
     state: present
     definition:
@@ -80,6 +82,4 @@
           - storageClassName: "local-storage-class"
             volumeMode: Filesystem
             fsType: xfs
-            devicePaths:
-              - /dev/disk/by-id/scsi-36d4ae520aee8fb0026a37c410a8b1154
-              - /dev/disk/by-id/scsi-36d4ae5208d45bb0026a379070cb897cf
+            devicePaths: "{{ lso_devices }}"

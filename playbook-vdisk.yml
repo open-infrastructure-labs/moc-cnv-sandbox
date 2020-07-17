@@ -70,7 +70,7 @@
         - name: create hd vdisk
           delegate_to: localhost
           command: >-
-            {{ curl }} -d@-
+            {{ curl }} -d@- -w 'Status: %{http_code}\n'
             "{{ baseuri }}/redfish/v1/Systems/System.Embedded.1/Storage/RAID.Integrated.1-1/Volumes"
           args:
             stdin: "{{ newdrive|to_nice_json }}"
