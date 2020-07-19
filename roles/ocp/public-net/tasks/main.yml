@@ -23,8 +23,8 @@
   register: machineconfig
 
 - include_role:
-    name: ocp/machineconfig
-    tasks_from: waitforupdate.yml
+    name: ocp/api
+    tasks_from: waitformachineconfig.yml
   vars:
     machineconfig_result: "{{ machineconfig }}"
     machineconfig_pool: worker

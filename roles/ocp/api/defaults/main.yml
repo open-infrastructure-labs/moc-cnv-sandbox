@@ -1,0 +1,4 @@
+deployment_wait_retries: 180
+deployment_wait_delay: 10
+machineconfig_wait_retries: 180
+machineconfig_wait_delay: 10

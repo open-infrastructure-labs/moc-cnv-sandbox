@@ -1,0 +1,22 @@
+---
+- name: wait until some deployments exist
+  k8s_info:
+    api_version: apps/v1
+    kind: deployment
+    namespace: "{{ deployment_ns }}"
+  register: deployments_exist
+  until: >-
+    deployments_exist.resources
+  retries: "{{ deployment_wait_retries }}"
+  delay: "{{ deployment_wait_delay }}"
+
+- name: wait for all deployments in namespace to be available
+  k8s_info:
+    api_version: apps/v1
+    kind: deployment
+    namespace: "{{ deployment_ns }}"
+  register: deployments
+  until: >-
+    not deployments.resources|json_query('[?status.availableReplicas != status.replicas]')
+  retries: "{{ deployment_wait_retries }}"
+  delay: "{{ deployment_wait_delay }}"

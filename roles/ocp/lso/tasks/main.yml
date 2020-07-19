@@ -35,6 +35,13 @@
         source: redhat-operators
         sourceNamespace: openshift-marketplace
 
+- name: wait for operator installation to complete
+  include_role:
+    name: ocp/api
+    tasks_from: waitfordeployment.yml
+  vars:
+    deployment_ns: local-storage
+
 # This was a clever idea but it turned out to be useless. LSO doesn't
 # recognize the symlink as a valid block device (probably because it
 # is inspecting the output of `lsblk` rather than just doing what the

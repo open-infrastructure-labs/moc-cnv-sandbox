@@ -9,8 +9,8 @@
   until: >-
     mcupdate.resources.0.status.conditions[-1].type == "Updating" and
     mcupdate.resources.0.status.conditions[-1].status == "True"
-  delay: 10
-  retries: 3
+  retries: "{{ machineconfig_wait_retries }}"
+  delay: "{{ machineconfig_wait_delay }}"
 
 - name: wait for machineconfig update to complete
   k8s_info:
@@ -21,5 +21,5 @@
   until: >-
     mcupdate.resources.0.status.conditions[-1].type == "Updating" and
     mcupdate.resources.0.status.conditions[-1].status == "False"
-  delay: 10
-  retries: 180
+  retries: "{{ machineconfig_wait_retries }}"
+  delay: "{{ machineconfig_wait_delay }}"

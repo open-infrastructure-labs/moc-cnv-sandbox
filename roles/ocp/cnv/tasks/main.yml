@@ -35,6 +35,13 @@
         source: redhat-operators
         sourceNamespace: openshift-marketplace
 
+- name: wait for operator installation to complete
+  include_role:
+    name: ocp/api
+    tasks_from: waitfordeployment.yml
+  vars:
+    deployment_ns: openshift-cnv
+
 - name: create cnv operator deployment
   k8s:
     state: present
