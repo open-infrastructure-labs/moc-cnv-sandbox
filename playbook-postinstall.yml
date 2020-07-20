@@ -3,12 +3,15 @@
   become: true
   tags: [fetch]
   tasks:
+    # Save a copy of the generated install-config.yaml file for
+    # diagnostic/debugging purposes.
     - name: get install-config
       fetch:
         src: /home/kni/install-config.yaml
         dest: install-config.yaml
         flat: true
 
+    # Fetch the kubeconfig file for authenticating to the OpenShift API.
     - name: get kubeconfig
       fetch:
         src: /home/kni/clusterconfigs/auth/kubeconfig
@@ -20,17 +23,34 @@
   environment:
     KUBECONFIG: ./kubeconfig
   roles:
+    # Set up the default ingress certificate (used e.g. for the 
+    # openshift web ui).
     - role: ocp/default-ingress-certificate
       tags: [tls]
+
+    # Connect OpenShift to the MOC SSO environment.
     - role: ocp/openid
       tags: [openid]
+
+    # Configure authorization. In particular, ensure that automatically
+    # created users cannot create projects until after they have been
+    # added to the approved-users group.
     - role: ocp/authz
       tags: [authz]
+
+    # Install CNV operator.
     - role: ocp/cnv
       tags: [cnv]
+
+    # Configure bridge to permit CNV VMs to connect directly to
+    # baremetal network.
     - role: ocp/public-net
       tags: net
+
+    # Install and configure Local Storage Operator.
     - role: ocp/lso
       tags: [lso]
+
+    # Configure the hostpath provisioner.
     - role: ocp/hostpath
       tags: [hostpath]
