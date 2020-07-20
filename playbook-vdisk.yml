@@ -71,6 +71,7 @@
           delegate_to: localhost
           command: >-
             {{ curl }} -d@- -w 'Status: %{http_code}\n'
+            -H 'Content-type: application/json'
             "{{ baseuri }}/redfish/v1/Systems/System.Embedded.1/Storage/RAID.Integrated.1-1/Volumes"
           args:
             stdin: "{{ newdrive|to_nice_json }}"
