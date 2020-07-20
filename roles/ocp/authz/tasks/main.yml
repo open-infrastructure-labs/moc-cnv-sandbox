@@ -1,15 +1,37 @@
 ---
-- name: ensure authorized_provisioners group exists
+- name: ensure approved-users group exists
   k8s:
     state: present
     definition:
       apiVersion: user.openshift.io/v1
       kind: Group
       metadata:
-        name: authorized-provisioners
+        name: approved-users
       users: []
 
-- name: require membership in authorized_provisioners for self-provisioner role
+- name: ensure nad-view-user role exists
+  k8s:
+    state: present
+    definition:
+      apiVersion: rbac.authorization.k8s.io/v1
+      kind: ClusterRole
+      metadata:
+        annotations:
+          openshift.io/description: >-
+            A user that can get basic information about
+            network-attachment-definitions.
+        name: nad-view-user
+      rules:
+        - apiGroups:
+            - k8s.cni.cncf.io
+          resources:
+            - network-attachment-definitions
+          verbs:
+            - list
+            - get
+            - watch
+
+- name: require membership in approved-users for self-provisioner role
   k8s:
     state: present
     definition:
@@ -24,4 +46,26 @@
       subjects:
         - apiGroup: rbac.authorization.k8s.io
           kind: Group
-          name: authorized-provisioners
+          name: approved-users
+
+- name: allow approved users to view network attachment definitions
+  k8s:
+    state: present
+    definition:
+      kind: ClusterRoleBinding
+      apiVersion: rbac.authorization.k8s.io/v1
+      metadata:
+        name: allow-view-nads
+        annotations:
+          openshift.io/description: >-
+            Permit members of the approved-users group to view network
+            attachment definitions by binding them to the
+            nad-view-user role.
+      subjects:
+        - kind: Group
+          apiGroup: rbac.authorization.k8s.io
+          name: approved-users
+      roleRef:
+        apiGroup: rbac.authorization.k8s.io
+        kind: ClusterRole
+        name: nad-view-user
