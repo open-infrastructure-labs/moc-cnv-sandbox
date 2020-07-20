@@ -22,8 +22,3 @@ os_registry_user: openshift
 os_registry_password: openshift
 os_ingress_cert: ./certs/api.cnv.massopen.cloud.crt
 os_ingress_cert_key: ./certs/api.cnv.massopen.cloud.key
-
-lso_devices:
-  - /dev/disk/by-id/scsi-36d4ae520aee8fb0026a37c410a8b1154
-  - /dev/disk/by-id/scsi-36d4ae5208d45bb0026a379070cb897cf
-  - /dev/disk/by-id/scsi-36b8ca3a0e7b96c0026a48f03080f2deb
