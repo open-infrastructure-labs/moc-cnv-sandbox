@@ -22,6 +22,7 @@ all:
         ilana_openshift:
           vars:
             ansible_user: core
+            ansible_python_interpreter: /usr/libexec/platform-python
           hosts:
             openshift-master-0.cnv2.massopen.cloud:
               ipmi_host: 10.0.15.2
