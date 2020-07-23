@@ -1,0 +1,18 @@
+---
+- name: read pull-secret.json
+  set_fact:
+    pull_secret: "{{ lookup('file', 'pull-secret.json') }}"
+
+- name: update pull-secret with local registry credentials
+  set_fact:
+    pull_secret: >-
+      {{
+        pull_secret | combine({
+          "auths": {
+            "provisioner.cnv.massopen.cloud:5000": {
+              "auth": "{}:{}".format(os_registry_user, os_registry_password) | b64encode,
+              "email": "lars@redhat.com"
+            }
+          }
+        }, recursive=true)
+      }}
