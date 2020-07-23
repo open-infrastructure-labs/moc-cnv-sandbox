@@ -54,3 +54,17 @@
                     enabled: false
                 port:
                   - name: enp4s0f1np1
+
+- name: configure external ips
+  k8s:
+    state: present
+    definition:
+      apiVersion: config.openshift.io/v1
+      kind: Network
+      metadata:
+        name: cluster
+      spec:
+        externalIP:
+          policy:
+            allowedCIDRs: "{{ os_allowed_cidrs }}"
+          autoAssignCIDRs: "{{ os_autoassign_cidrs }}"
