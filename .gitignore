@@ -4,3 +4,6 @@ domain.key
 ifcfg-baremetal
 route-baremetal
 certs/
+kubeconfig
+pull-secret.json
+ca/
