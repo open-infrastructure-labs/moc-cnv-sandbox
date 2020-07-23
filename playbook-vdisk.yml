@@ -70,7 +70,8 @@
         - name: create hd vdisk
           delegate_to: localhost
           command: >-
-            {{ curl }} -d@- -w 'Status: %{http_code}\n'
+            {{ curl }} -d@-
+            -w 'Status: %{http_code}\n'
             -H 'Content-type: application/json'
             "{{ baseuri }}/redfish/v1/Systems/System.Embedded.1/Storage/RAID.Integrated.1-1/Volumes"
           args:
@@ -100,6 +101,8 @@
           delegate_to: localhost
           command: >-
             {{ curl }} -X DELETE
+            -w 'Status: %{http_code}\n'
+            -H 'Content-type: application/json'
             "{{ baseuri }}{{ hdd_device.Links.Volumes.0['@odata.id'] }}"
           register: delete
 
