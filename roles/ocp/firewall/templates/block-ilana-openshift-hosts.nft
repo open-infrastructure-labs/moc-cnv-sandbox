@@ -1,0 +1,11 @@
+table inet filter {
+	set ilana_openshift_hosts {
+		type ipv4_addr;
+		elements = { {{ ilana_openshift_hosts|join(', ') }} }
+	}
+
+	chain INPUT {
+		type filter hook input priority 0; policy accept;
+		ip saddr @ilana_openshift_hosts counter drop
+	}
+}

@@ -1,0 +1,41 @@
+- name: get ip addresses of ilan openshift hosts
+  set_fact:
+    ilana_openshift_hosts: >-
+      {{ ilana_openshift_hosts + [lookup('dig', item, 'flat=1')] }}
+  loop: "{{ groups.ilana_openshift }}"
+  vars:
+    ilana_openshift_hosts: []
+
+- name: create machineconfig that implements firewall
+  k8s:
+    state: present
+    definition:
+      apiVersion: machineconfiguration.openshift.io/v1
+      kind: MachineConfig
+      metadata:
+        name: 40-block-ilana-openshift-hosts
+        labels:
+          machineconfiguration.openshift.io/role: master
+      spec:
+        config:
+          ignition:
+            version: 2.2.0
+          systemd:
+            units:
+              - name: nftables.service
+                enabled: true
+          storage:
+            files:
+              - filesystem: root
+                path: /etc/sysconfig/nftables.conf
+                contents:
+                  source: "{{ lookup('template', 'block-ilana-openshift-hosts.nft') | ignition_encode }}"
+                mode: 0644
+  register: machineconfig
+
+- include_role:
+    name: ocp/api
+    tasks_from: waitformachineconfig.yml
+  vars:
+    machineconfig_result: "{{ machineconfig }}"
+    machineconfig_pool: master
