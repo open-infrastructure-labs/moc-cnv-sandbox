@@ -42,6 +42,7 @@
     openssl req -new -x509
     -subj "{{ ca_subject }}"
     -key "{{ ca_dir }}/ca.key"
+    -days "{{ ca_lifetime }}"
     -out "{{ ca_dir }}/ca.crt"
   args:
     creates: "{{ ca_dir }}/ca.crt"

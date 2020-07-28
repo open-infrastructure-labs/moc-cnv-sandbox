@@ -5,6 +5,8 @@ ca_subject: /CN=conserver-ca
 ca_default_duration: 3650
 ca_default_crl_days: 30
 ca_default_md: sha256
+ca_lifetime: 18250
 
 crt_bits: 4096
 crt_subject: "/CN={{ crt_name }}"
+crt_lifetime: 3650
