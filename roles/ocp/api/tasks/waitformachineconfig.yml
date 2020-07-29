@@ -7,6 +7,7 @@
     name: "{{ machineconfig_pool }}"
   register: mcupdate
   until: >-
+    mcpupdate.resources is defined and
     mcupdate.resources.0.status.conditions[-1].type == "Updating" and
     mcupdate.resources.0.status.conditions[-1].status == "True"
   retries: "{{ machineconfig_wait_retries }}"
