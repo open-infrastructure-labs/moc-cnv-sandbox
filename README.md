@@ -7,7 +7,7 @@ Configuration and documentation for the [CNV][] Sandbox at the [Mass Open Cloud]
 
 ## Playbooks
 
-- `playbook.yml`
+- `playbook-preinstall.yml`
 
   Set up provisioning host and generate the install configuration.
 
