@@ -23,24 +23,12 @@ Configuration and documentation for the [CNV][] Sandbox at the [Mass Open Cloud]
 
   Install ssh keys on openshift hosts.
 
-## Post install configuration
+- `playbook-postinstall.yml`
 
-- `00-cnv.yml`
-
-  Create CNV deployment.
-
-- `01-hostpath-provisioner-dir.yml`
-
-  Create machineconfig that ensures /srv/local-storage exists
-  and has an appropriate selinux context.
-
-- `02-hostpath-provisioner.yml`
-
-  Create hostpath provisioner deployment.
-
-- `03-hostpath-provisioner-storageclass.yml`
-
-  Create hostpath provisioner storage class.
+  This playbook fetches authentication credentials from the
+  provisioning host and then uses the OpenShift API to perform
+  post-configuration tasks (installing certificates, configuring SSO,
+  installing CNV, etc).
 
 ## See also
 
