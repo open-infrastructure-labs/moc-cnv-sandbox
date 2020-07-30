@@ -58,13 +58,14 @@
     rhcos_openstack_sha_compressed: >-
       {{ rhcos_json.json.images.openstack.sha256 }}
 
-- debug:
+- name: log extracted uris
+  debug:
     msg:
-      - "{{ rhcos_openstack_uri }}"
-      - "{{ rhcos_qemu_uri }}"
-      - "{{ rhcos_path }}"
-      - "{{ rhcos_qemu_sha_uncompressed }}"
-      - "{{ rhcos_openstack_sha_compressed }}"
+      - "openstack_uri: {{ rhcos_openstack_uri }}"
+      - "qemu_uri: {{ rhcos_qemu_uri }}"
+      - "path: {{ rhcos_path }}"
+      - "sha_uncompresed: {{ rhcos_qemu_sha_uncompressed }}"
+      - "sha_compressed: {{ rhcos_openstack_sha_compressed }}"
 
 - name: download rhcos images
   get_url:

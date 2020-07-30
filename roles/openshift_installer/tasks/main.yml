@@ -14,12 +14,10 @@
     curl -s https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{ openshift_release }}/release.txt
   register: release_txt_cmd
 
-- set_fact:
+- name: store release text in release_txt variable
+  set_fact:
     release_txt:
       content: "{{ release_txt_cmd.stdout }}"
-
-- debug:
-    var: release_txt
 
 - name: get installer image name
   set_fact:
