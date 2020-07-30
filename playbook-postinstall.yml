@@ -41,8 +41,8 @@
       tags: [tls]
 
     # Connect OpenShift to the MOC SSO environment.
-    - role: ocp/openid
-      tags: [openid]
+    - role: ocp/moc-sso
+      tags: [sso]
 
     # Configure authorization. In particular, ensure that automatically
     # created users cannot create projects until after they have been
