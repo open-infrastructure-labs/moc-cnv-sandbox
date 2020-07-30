@@ -8,20 +8,27 @@
     - name: get install-config
       fetch:
         src: /home/kni/install-config.yaml
-        dest: install-config.yaml
+        dest: cluster/install-config.yaml
         flat: true
 
-    # Fetch the kubeconfig file for authenticating to the OpenShift API.
+    # Fetch the kubeconfig file
     - name: get kubeconfig
       fetch:
         src: /home/kni/clusterconfigs/auth/kubeconfig
-        dest: kubeconfig
+        dest: cluster/kubeconfig
+        flat: true
+
+    # Fetch the kubeadmin password
+    - name: get kubeadmin password
+      fetch:
+        src: /home/kni/clusterconfigs/auth/kubeadmin-password
+        dest: cluster/kubeadmin-password
         flat: true
 
 - hosts: localhost
   tags: [ocp]
   environment:
-    KUBECONFIG: ./kubeconfig
+    KUBECONFIG: ./cluster/kubeconfig
   roles:
     # Block openshift hosts from ilana's cluster, working around
     # substring matching issue in openshift 4.4.x.
