@@ -4,7 +4,7 @@ metadata:
   name: {{ os_base_domain.split('.').0 }}
 networking:
   machineCIDR: {{ os_public_cidr }}
-  networkType: OVNKubernetes
+  networkType: {{ os_network_type }}
 compute:
 - name: worker
   replicas: 2
