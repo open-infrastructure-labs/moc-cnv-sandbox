@@ -1,0 +1,93 @@
+---
+- name: ensure metallb namespace exists
+  k8s:
+    name: metallb-system
+    kind: Namespace
+    state: present
+    api_version: v1
+
+- name: ensure metallb service accounts exists
+  k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: ServiceAccount
+      metadata:
+        labels:
+          app: metallb
+        name: "{{ item }}"
+        namespace: metallb-system
+  loop:
+    - controller
+    - speaker
+
+- name: ensure allow-privileged cluster role exists
+  k8s:
+    state: present
+    definition:
+      apiVersion: rbac.authorization.k8s.io/v1
+      kind: ClusterRole
+      metadata:
+        name: allow-privileged
+      rules:
+        - apiGroups:
+            - security.openshift.io
+          resourceNames:
+            - privileged
+          resources:
+            - securitycontextconstraints
+          verbs:
+            - use
+
+- name: bind metallb:speaker service account to allow-privileged role
+  k8s:
+    state: present
+    definition:
+      apiVersion: rbac.authorization.k8s.io/v1
+      kind: ClusterRoleBinding
+      metadata:
+        name: metallb-allow-privileged
+      roleRef:
+        apiGroup: rbac.authorization.k8s.io
+        kind: ClusterRole
+        name: allow-privileged
+      subjects:
+        - kind: ServiceAccount
+          name: speaker
+          namespace: metallb-system
+
+- name: install metallb
+  k8s:
+    state: present
+    src: "{{ role_path }}/files/metallb.yaml"
+
+
+- name: create metallb memberlist secret
+  k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      data:
+        secretkey: "{{ metallb_memberlist_secret }}"
+      kind: Secret
+      metadata:
+        creationTimestamp: null
+        name: memberlist
+        namespace: metallb-system
+
+- name: configure metallb
+  k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        namespace: metallb-system
+        name: config
+      data:
+        config: |
+          address-pools:
+          - name: default
+            protocol: layer2
+            addresses:
+            - {{ metallb_address_range[0] }}-{{ metallb_address_range[1] }}

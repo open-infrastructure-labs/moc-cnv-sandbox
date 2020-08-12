@@ -66,3 +66,7 @@
     # Configure the hostpath provisioner.
     - role: ocp/hostpath
       tags: [hostpath]
+
+    # Install metallb load balancer
+    - role: ocp/metallb
+      tags: [metallb]
