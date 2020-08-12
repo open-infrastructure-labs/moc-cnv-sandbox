@@ -29,7 +29,7 @@ os_autoassign_cidrs:
 os_allowed_cidrs:
   - 192.12.185.32/28
 
-os_network_type: OpenShiftSDN
+os_network_type: OVNKubernetes
 
 metallb_address_range:
   - 192.12.185.16
