@@ -30,11 +30,6 @@
   environment:
     KUBECONFIG: ./cluster/kubeconfig
   roles:
-    # Block openshift hosts from ilana's cluster, working around
-    # substring matching issue in openshift 4.4.x.
-    - role: ocp/firewall
-      tags: [firewall]
-
     # Set up the default ingress certificate (used e.g. for the 
     # openshift web ui).
     - role: ocp/default-ingress-certificate
@@ -58,10 +53,6 @@
     # baremetal network.
     - role: ocp/public-net
       tags: net
-
-    # Install and configure Local Storage Operator.
-    - role: ocp/lso
-      tags: [lso]
 
     # Configure the hostpath provisioner.
     - role: ocp/hostpath
