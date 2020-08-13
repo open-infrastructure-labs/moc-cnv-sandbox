@@ -32,5 +32,5 @@ os_allowed_cidrs:
 os_network_type: OVNKubernetes
 
 metallb_address_range:
-  - 192.12.185.16
-  - 192.12.185.31
+  - 192.12.185.32
+  - 192.12.185.63
