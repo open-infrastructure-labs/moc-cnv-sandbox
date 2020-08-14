@@ -1,13 +1,15 @@
 ---
-- name: ensure approved-users group exists
+- name: ensure groups exist
   k8s:
     state: present
     definition:
       apiVersion: user.openshift.io/v1
       kind: Group
       metadata:
-        name: approved-users
-      users: []
+        name: "{{ item }}"
+  loop:
+    - approved-users
+    - cluster-admins
 
 - name: ensure nad-view-user role exists
   k8s:
@@ -31,7 +33,24 @@
             - get
             - watch
 
-- name: require membership in approved-users for self-provisioner role
+- name: grant cluster-admin role to members of cluster-admins
+  k8s:
+    state: present
+    definition:
+      apiVersion: rbac.authorization.k8s.io/v1
+      kind: ClusterRoleBinding
+      metadata:
+        name: cluster-admins-rb
+      roleRef:
+        apiGroup: rbac.authorization.k8s.io
+        kind: ClusterRole
+        name: cluster-admin
+      subjects:
+        - apiGroup: rbac.authorization.k8s.io
+          kind: Group
+          name: cluster-admins
+
+- name: grant self-provisioner role to members of approved-users
   k8s:
     state: present
     definition:
