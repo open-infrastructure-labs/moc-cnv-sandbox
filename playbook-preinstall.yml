@@ -1,4 +1,11 @@
 ---
+# Configure dns and dhcp records on nameservers.
+- hosts: nameservers
+  tags: infra
+  become: true
+  roles:
+    - role: dnsmasq
+      tags: dnsmasq
 
 # Perform some basic setup of the provisioning host:
 #
