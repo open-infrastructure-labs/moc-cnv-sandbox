@@ -3,6 +3,8 @@
 - hosts: nameservers
   tags: infra
   become: true
+  collections:
+    - moc.cnv_common
   roles:
     - role: dnsmasq
       tags: dnsmasq

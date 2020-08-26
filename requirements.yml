@@ -1,4 +1,5 @@
 ---
 collections:
+  - name: moc.cnv_common
   - name: containers.podman
   - name: larsks.ignition
