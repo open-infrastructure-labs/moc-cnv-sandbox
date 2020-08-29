@@ -18,7 +18,7 @@
               - filesystem: root
                 path: /etc/udev/rules.d/50-br-public-nic-name.rules
                 contents:
-                  source: "{{ lookup('file', '50-br-public-nic-name.rules') | larsks.ignition.ignition_encode }}"
+                  source: "{{ lookup('file', '50-br-public-nic-name.rules') | moc.cnv_common.ignition_encode }}"
                 mode: 0644
   register: machineconfig
 

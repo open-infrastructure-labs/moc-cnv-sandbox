@@ -29,7 +29,7 @@
               - filesystem: root
                 path: /etc/sysconfig/nftables.conf
                 contents:
-                  source: "{{ lookup('template', 'block-ilana-openshift-hosts.nft') | larsks.ignition.ignition_encode }}"
+                  source: "{{ lookup('template', 'block-ilana-openshift-hosts.nft') | moc.cnv_common.ignition_encode }}"
                 mode: 0644
   register: machineconfig
 
