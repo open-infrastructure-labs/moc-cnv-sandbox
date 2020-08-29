@@ -56,7 +56,8 @@
                   - name: enp4s0f1np1
 
 - name: configure external ips
-  when: "{{ os_want_external_ips|default(false)|bool }}"
+  when: >-
+    os_want_external_ips|default(false)|bool
   k8s:
     state: present
     definition:
