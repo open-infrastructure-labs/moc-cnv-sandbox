@@ -9,6 +9,7 @@
         name: 50-br-public-nic-name
         labels:
           machineconfiguration.openshift.io/role: worker
+          moc.networker: "true"
       spec:
         config:
           ignition:
@@ -40,6 +41,7 @@
       spec:
         nodeSelector:
           node-role.kubernetes.io/worker: ""
+          moc.networker: "true"
         desiredState:
           interfaces:
             - name: br-public
