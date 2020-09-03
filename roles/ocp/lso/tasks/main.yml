@@ -42,33 +42,6 @@
   vars:
     deployment_ns: local-storage
 
-# This was a clever idea but it turned out to be useless. LSO doesn't
-# recognize the symlink as a valid block device (probably because it
-# is inspecting the output of `lsblk` rather than just doing what the
-# operator requested).
-- name: create lso udev rules
-  when: false
-  k8s:
-    state: present
-    definition:
-      apiVersion: machineconfiguration.openshift.io/v1
-      kind: MachineConfig
-      metadata:
-        name: 60-lso-udev-rules
-        labels:
-          machineconfiguration.openshift.io/role: worker
-      spec:
-        config:
-          ignition:
-            version: 2.2.0
-          storage:
-            files:
-              - filesystem: root
-                path: /etc/udev/rules.d/60-lso-udev.rules
-                contents:
-                  source: "{{ lookup('file', '60-lso-udev.rules') | moc.cnv_common.ignition_encode }}"
-                mode: 0644
-
 - name: create local storage provisioner
   when: lso_devices is defined
   k8s:
