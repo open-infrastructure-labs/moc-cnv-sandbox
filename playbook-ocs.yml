@@ -1,0 +1,12 @@
+---
+- hosts: localhost
+  gather_facts: false
+  tags: [ocp]
+  environment:
+    KUBECONFIG: ./cluster/kubeconfig
+  roles:
+    - role: ocp/lso
+      tags: [lso]
+
+    - role: ocp/ocs
+      tags: [ocs]

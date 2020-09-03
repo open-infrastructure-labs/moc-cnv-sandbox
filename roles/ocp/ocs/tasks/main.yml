@@ -1,0 +1,31 @@
+---
+- name: ensure openshift-storage namespace exists
+  k8s:
+    name: openshift-storage
+    kind: Namespace
+    state: present
+    api_version: v1
+
+- name: subscribe to ocs operator
+  k8s:
+    state: present
+    definition:
+      apiVersion: operators.coreos.com/v1alpha1
+      kind: Subscription
+      metadata:
+        name: ocs-operator
+        namespace: openshift-storage
+      spec:
+        channel: "{{ ocs_channel_version|string }}"
+        installPlanApproval: Automatic
+        name: ocs-operator
+        source: redhat-operators
+        sourceNamespace: openshift-marketplace
+        startingCSV: "{{ ocs_version }}"
+
+- name: wait for operator installation to complete
+  include_role:
+    name: ocp/api
+    tasks_from: waitfordeployment.yml
+  vars:
+    deployment_ns: openshift-storage
