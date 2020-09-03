@@ -1,4 +1,44 @@
 ---
+- name: ensure storage machineset exists
+  k8s:
+    state: present
+    definition:
+      apiVersion: machine.openshift.io/v1beta1
+      kind: MachineSet
+      metadata:
+        labels:
+          machine.openshift.io/cluster-api-cluster: cnv
+          machine.openshift.io/cluster-api-machine-role: worker
+          machine.openshift.io/cluster-api-machine-type: worker
+        name: cnv-storage-0
+        namespace: openshift-machine-api
+      spec:
+        replicas: "{{ ocs_replicas }}"
+        selector:
+          matchLabels:
+            machine.openshift.io/cluster-api-cluster: cnv
+            machine.openshift.io/cluster-api-machineset: cnv-storage-0
+        template:
+          metadata:
+            labels:
+              machine.openshift.io/cluster-api-cluster: cnv
+              machine.openshift.io/cluster-api-machine-role: worker
+              machine.openshift.io/cluster-api-machine-type: worker
+              machine.openshift.io/cluster-api-machineset: cnv-storage-0
+              cluster.ocs.openshift.io/openshift-storage: ''
+          spec:
+            metadata: {}
+            providerSpec:
+              value:
+                hostSelector: {}
+                image:
+                  checksum: "{{ os_image_checksum_url }}"
+                  url: "{{ os_image_url }}"
+                metadata:
+                  creationTimestamp: null
+                userData:
+                  name: worker-user-data
+  
 - name: ensure openshift-storage namespace exists
   k8s:
     name: openshift-storage
