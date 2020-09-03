@@ -1,0 +1,9 @@
+---
+- hosts: openshift
+  gather_facts: false
+  tags: [ocp]
+  environment:
+    KUBECONFIG: ./cluster/kubeconfig
+  roles:
+    - role: ocp/bmh
+      tags: [bmh]
