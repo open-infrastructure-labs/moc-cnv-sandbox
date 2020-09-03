@@ -36,3 +36,4 @@
         userData:
           name: "{{ os_role }}-user-data"
           namespace: openshift-machine-api
+        hardwareProfile: "{{ os_hardware_profile|default('unknown') }}"
