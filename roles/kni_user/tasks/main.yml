@@ -16,6 +16,7 @@
     group: root
 
 - name: create ssh key
+  become: true
   become_user: kni
   command: >-
     ssh-keygen -t rsa -f /home/kni/.ssh/id_rsa -N ''
