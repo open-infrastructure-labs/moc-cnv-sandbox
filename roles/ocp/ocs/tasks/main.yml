@@ -25,9 +25,10 @@
               machine.openshift.io/cluster-api-machine-role: worker
               machine.openshift.io/cluster-api-machine-type: worker
               machine.openshift.io/cluster-api-machineset: cnv-storage-0
-              cluster.ocs.openshift.io/openshift-storage: ''
           spec:
-            metadata: {}
+            metadata:
+              labels:
+                cluster.ocs.openshift.io/openshift-storage: ''
             providerSpec:
               value:
                 hostSelector: {}
@@ -38,7 +39,7 @@
                   creationTimestamp: null
                 userData:
                   name: worker-user-data
-  
+
 - name: ensure openshift-storage namespace exists
   k8s:
     state: present
@@ -73,3 +74,61 @@
     tasks_from: waitfordeployment.yml
   vars:
     deployment_ns: openshift-storage
+
+- name: create local storage volumes
+  when: ocs_devices is defined
+  k8s:
+    state: present
+    definition:
+      apiVersion: "local.storage.openshift.io/v1"
+      kind: "LocalVolume"
+      metadata:
+        name: "localblock"
+        namespace: "local-storage"
+        labels:
+          app: ocs-storagecluster
+      spec:
+        tolerations:
+          - key: "node.ocs.openshift.io/storage"
+            value: "true"
+            effect: NoSchedule
+        nodeSelector:
+          nodeSelectorTerms:
+            - matchExpressions:
+                - key: cluster.ocs.openshift.io/openshift-storage
+                  operator: In
+                  values:
+                    - ''
+        storageClassDevices:
+          - storageClassName: "localblock"
+            volumeMode: Block
+            devicePaths: "{{ ocs_devices }}"
+
+- name: create storage cluster
+  k8s:
+    state: present
+    definition:
+      apiVersion: ocs.openshift.io/v1
+      kind: StorageCluster
+      metadata:
+        name: ocs-storagecluster
+        namespace: openshift-storage
+      spec:
+        manageNodes: false
+        monDataDirHostPath: /var/lib/rook
+        storageDeviceSets:
+          - count: 3
+            dataPVCTemplate:
+              spec:
+                accessModes:
+                  - ReadWriteOnce
+                resources:
+                  requests:
+                    storage: 500Gi
+                storageClassName: localblock
+                volumeMode: Block
+            name: ocs-deviceset
+            placement: {}
+            portable: false
+            replica: 3
+            resources: {}
