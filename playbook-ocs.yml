@@ -1,7 +1,14 @@
 ---
+- hosts: storage
+  gather_facts: false
+  environment:
+    KUBECONFIG: ./cluster/kubeconfig
+  roles:
+    - role: ocp/bmh
+      tags: [bmh]
+  
 - hosts: localhost
   gather_facts: false
-  tags: [ocp]
   environment:
     KUBECONFIG: ./cluster/kubeconfig
   roles:
