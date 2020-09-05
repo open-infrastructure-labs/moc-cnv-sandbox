@@ -41,25 +41,3 @@
     tasks_from: waitfordeployment.yml
   vars:
     deployment_ns: local-storage
-
-- name: create local storage provisioner
-  when: lso_devices is defined
-  k8s:
-    state: present
-    definition:
-      apiVersion: "local.storage.openshift.io/v1"
-      kind: "LocalVolume"
-      metadata:
-        name: "local-disks"
-        namespace: "local-storage"
-      spec:
-        nodeSelector:
-          nodeSelectorTerms:
-            - matchExpressions:
-              - key: node-role.kubernetes.io/worker
-                operator: Exists
-        storageClassDevices:
-          - storageClassName: "local-storage-class"
-            volumeMode: Filesystem
-            fsType: xfs
-            devicePaths: "{{ lso_devices }}"
