@@ -5,7 +5,6 @@
     KUBECONFIG: ./cluster/kubeconfig
   roles:
     - role: ocp/bmh
-      tags: [bmh]
   
 - hosts: localhost
   gather_facts: false
@@ -13,7 +12,4 @@
     KUBECONFIG: ./cluster/kubeconfig
   roles:
     - role: ocp/lso
-      tags: [lso]
-
     - role: ocp/ocs
-      tags: [ocs]

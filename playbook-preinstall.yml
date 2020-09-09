@@ -7,7 +7,6 @@
     - moc.cnv_common
   roles:
     - role: dnsmasq
-      tags: dnsmasq
 
 # Perform some basic setup of the provisioning host:
 #
@@ -22,13 +21,9 @@
   become: true
   roles:
     - role: rh_register
-      tags: [rhn]
     - role: base_packages
-      tags: [packages]
     - role: libvirt
-      tags: [libvirt]
     - role: kni_user
-      tags: [kni]
 
 # Configure firewall and network interfaces on the provisioning host.
 - hosts: provisioner
@@ -36,11 +31,8 @@
   become: true
   roles:
     - role: provisioner/firewall
-      tags: [firewall]
     - role: provisioner/net_baremetal
-      tags: [net.baremetal]
     - role: provisioner/net_provision
-      tags: [net.provision]
 
 # Install the openshift installer and set up support services
 # (the image cache and local registry mirror).

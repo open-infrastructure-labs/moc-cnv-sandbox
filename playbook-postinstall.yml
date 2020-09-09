@@ -32,32 +32,25 @@
   roles:
     # Set up the default ingress certificate (used e.g. for the 
     # openshift web ui).
-    - role: ocp/default-ingress-certificate
-      tags: [tls]
+    - role: ocp/tls
 
     # Connect OpenShift to the MOC SSO environment.
     - role: ocp/moc-sso
-      tags: [sso]
 
     # Configure authorization. In particular, ensure that automatically
     # created users cannot create projects until after they have been
     # added to the approved-users group.
     - role: ocp/authz
-      tags: [authz]
 
     # Install CNV operator.
     - role: ocp/cnv
-      tags: [cnv]
 
     # Configure bridge to permit CNV VMs to connect directly to
     # baremetal network.
     - role: ocp/public-net
-      tags: net
 
     # Configure the hostpath provisioner.
     - role: ocp/hostpath
-      tags: [hostpath]
 
     # Install metallb load balancer
     - role: ocp/metallb
-      tags: [metallb]
