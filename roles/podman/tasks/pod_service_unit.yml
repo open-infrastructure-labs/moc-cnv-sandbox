@@ -1,4 +1,9 @@
 ---
+- name: ensure systemd user unit directory exists
+  file:
+    path: "~/.config/systemd/user"
+    state: directory
+
 - name: create podman service unit {{ podman_unit_file }}
   template:
     src: template.service
