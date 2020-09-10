@@ -4,6 +4,17 @@
     path: "~/.config/systemd/user"
     state: directory
 
+- name: check for buggy shadow-utils
+  command: >-
+    getcap /usr/bin/newuidmap
+  register: newuidmap_caps
+
+- name: fail if shadow-utils needs to be reinstalled
+  fail:
+    msg: "you need to re-install shadow-utils and run 'podman system migrate'"
+  when: >-
+    'cap_setuid+ep' not in newuidmap_caps.stdout
+
 - name: create podman service unit {{ podman_unit_file }}
   template:
     src: template.service
