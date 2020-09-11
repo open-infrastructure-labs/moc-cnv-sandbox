@@ -7,10 +7,24 @@
   changed_when: check_nic_bm.rc != 0
 
 - name: configure baremetal interface
-  when: check_nic_bm is changed
+  when: check_nic_bm is changed or force_net_reconfigure|default(false)|bool
   shell: |
     set -e
+
+    # delete system interfaces
     nmcli con down "System {{ prov_nic_baremetal }}" || :
     nmcli con delete "System {{ prov_nic_baremetal }}" || :
-    nmcli con add ifname baremetal type bridge con-name baremetal
-    nmcli con add type bridge-slave ifname "{{ prov_nic_baremetal }}" master baremetal
+
+    # delete bridge in case we are reconfiguring
+    nmcli con down baremetal || :
+    nmcli con delete baremetal || :
+    nmcli con down bridge-slave-{{ prov_nic_baremetal }} || :
+    nmcli con delete bridge-slave-{{ prov_nic_baremetal }} || :
+
+    nmcli con add type bridge \
+      ifname baremetal \
+      con-name baremetal
+    nmcli con add type bridge-slave \
+      ifname "{{ prov_nic_baremetal }}" \
+      con-name "bridge-slave-{{ prov_nic_baremetal }}" \
+      master baremetal
