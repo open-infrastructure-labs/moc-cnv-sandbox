@@ -58,6 +58,8 @@
       kind: ClusterRoleBinding
       metadata:
         name: self-provisioners
+        annotations:
+          rbac.authorization.kubernetes.io/autoupdate: "false"
       roleRef:
         apiGroup: rbac.authorization.k8s.io
         kind: ClusterRole
