@@ -37,11 +37,6 @@
     # Connect OpenShift to the MOC SSO environment.
     - role: ocp/moc-sso
 
-    # Configure authorization. In particular, ensure that automatically
-    # created users cannot create projects until after they have been
-    # added to the approved-users group.
-    - role: ocp/authz
-
     # Install CNV operator.
     - role: ocp/cnv
 
