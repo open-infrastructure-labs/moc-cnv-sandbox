@@ -1,3 +1,6 @@
+{% set managers = groups.managers|reject('indirect_has_kv', hostvars, 'skip_install', true)|list %}
+{% set workers = groups.workers|reject('indirect_has_kv', hostvars, 'skip_install', true)|list %}
+---
 apiVersion: v1
 baseDomain: {{ os_base_domain.split('.', 1).1 }}
 metadata:
@@ -7,10 +10,10 @@ networking:
   networkType: {{ os_network_type }}
 compute:
 - name: worker
-  replicas: 2
+  replicas: {{ workers|length }}
 controlPlane:
   name: master
-  replicas: 3
+  replicas: {{ managers|length }}
   platform:
     baremetal: {}
 platform:
@@ -25,7 +28,7 @@ platform:
     bootstrapOSImage: "{{ os_bootstraposimage }}"
 {% endif %}
     hosts:
-{% for host in groups.managers %}
+{% for host in managers %}
       - name: {{ hostvars[host].inventory_hostname.split('.')[0] }}
         role: master
         bmc:
@@ -35,7 +38,7 @@ platform:
         bootMACAddress: {{ hostvars[host].provisioning_mac }}
         hardwareProfile: default
 {% endfor %}
-{% for host in groups.workers %}
+{% for host in workers %}
       - name: {{ hostvars[host].inventory_hostname.split('.')[0] }}
         role: worker
         bmc:
