@@ -1,3 +1,0 @@
----
-os_image_checksum_url: http://172.22.0.3:6180/images/rhcos-45.82.202007141718-0-openstack.x86_64.qcow2/rhcos-45.82.202007141718-0-compressed.x86_64.qcow2.md5sum
-os_image_url: http://172.22.0.3:6180/images/rhcos-45.82.202007141718-0-openstack.x86_64.qcow2/rhcos-45.82.202007141718-0-compressed.x86_64.qcow2
