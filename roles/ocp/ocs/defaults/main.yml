@@ -1,4 +1,4 @@
 ---
-ocs_channel_version: stable-4.4
-ocs_version: ocs-operator.v4.4.2
+ocs_channel_version: stable-4.5
+ocs_version: ocs-operator.v4.5.0
 ocs_replicas: 3
