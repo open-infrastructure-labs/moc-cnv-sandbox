@@ -40,12 +40,5 @@
     # Install CNV operator.
     - role: ocp/cnv
 
-    # Configure bridge to permit CNV VMs to connect directly to
-    # baremetal network.
-    - role: ocp/public-net
-
-    # Configure the hostpath provisioner.
-    - role: ocp/hostpath
-
     # Install metallb load balancer
     - role: ocp/metallb
