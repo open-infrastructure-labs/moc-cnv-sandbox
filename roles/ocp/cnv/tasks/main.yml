@@ -6,19 +6,6 @@
     state: present
     api_version: v1
 
-- name: ensure openshift-cnv operator group exists
-  k8s:
-    state: present
-    definition:
-      apiVersion: operators.coreos.com/v1
-      kind: OperatorGroup
-      metadata:
-        name: cnv-operator-group
-        namespace: openshift-cnv
-      spec:
-        targetNamespaces:
-          - openshift-cnv
-
 - name: subscribe to cnv operator
   k8s:
     state: present
