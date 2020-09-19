@@ -1,5 +1,6 @@
 ---
 - name: ensure storage machineset exists
+  tags: [machineset]
   k8s:
     state: present
     definition:
@@ -76,6 +77,7 @@
     deployment_ns: openshift-storage
 
 - name: create local storage volumes
+  tags: [ocs.volumes]
   when: ocs_devices is defined
   k8s:
     state: present
@@ -88,10 +90,6 @@
         labels:
           app: ocs-storagecluster
       spec:
-        tolerations:
-          - key: "node.ocs.openshift.io/storage"
-            value: "true"
-            effect: NoSchedule
         nodeSelector:
           nodeSelectorTerms:
             - matchExpressions:
