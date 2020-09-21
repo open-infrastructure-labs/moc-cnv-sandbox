@@ -40,3 +40,8 @@ openshift_users:
     - lars@bu.edu
     - robbarron@bu.edu
     - naved001@bu.edu
+
+  approved-users:
+    - aasthana@redhat.com
+    - hukhan@redhat.com
+    - mhild@redhat.com
