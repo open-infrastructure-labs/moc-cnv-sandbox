@@ -1,3 +1,5 @@
+# See https://docs.openshift.com/container-platform/4.5/security/certificates/replacing-default-ingress-certificate.html
+
 ---
 - name: create tls secret
   k8s:
