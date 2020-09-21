@@ -38,7 +38,7 @@ metallb_address_range:
 openshift_users:
   cluster-admins:
     - lars@bu.edu
-    - robbarron@bu.edu
+    - robbaron@bu.edu
     - naved001@bu.edu
 
   approved-users:
