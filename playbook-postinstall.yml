@@ -42,3 +42,6 @@
 
     # Install metallb load balancer
     - role: ocp/metallb
+
+    # Configure image registry
+    - role: ocp/registry

@@ -1,0 +1,32 @@
+---
+- name: create image registry pvc
+  k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
+        name: image-registry-storage
+        namespace: openshift-image-registry
+      spec:
+        accessModes:
+          - ReadWriteMany
+        resources:
+          requests:
+            storage: 100Gi
+        storageClassName: ocs-storagecluster-cephfs
+        volumeMode: Filesystem
+
+- name: configure image registry
+  k8s:
+    state: present
+    definition:
+      apiVersion: imageregistry.operator.openshift.io/v1
+      kind: Config
+      metadata:
+        name: cluster
+      spec:
+        managementState: Managed
+        storage:
+          pvc:
+            claim: image-registry-storage
