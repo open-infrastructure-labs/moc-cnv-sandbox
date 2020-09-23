@@ -22,6 +22,7 @@ os_registry_user: openshift
 os_registry_password: openshift
 os_ingress_cert: ./certs/api.cnv.massopen.cloud.crt
 os_ingress_cert_key: ./certs/api.cnv.massopen.cloud.key
+os_oauth_client_id: moc-openshift-cnv
 
 os_autoassign_cidrs:
   - 192.12.185.16/28

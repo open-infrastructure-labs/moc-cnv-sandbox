@@ -32,7 +32,7 @@
                 - name
                 preferredUsername:
                 - preferred_username
-              clientID: moc-openshift-cnv
+              clientID: "{{ os_oauth_client_id }}"
               clientSecret:
                 name: moc-sso-client-secret
               extraScopes: []
