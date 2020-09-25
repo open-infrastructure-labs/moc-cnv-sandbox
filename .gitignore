@@ -7,3 +7,8 @@ certs/
 kubeconfig
 pull-secret.json
 ca/
+group_vars/all/creds
+cluster/
+secrets/
+Pipfile
+Pipfile.lock
