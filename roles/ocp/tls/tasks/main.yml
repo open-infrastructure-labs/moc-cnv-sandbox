@@ -11,8 +11,8 @@
         name: default-ingress-certificate
         namespace: openshift-ingress
       data:
-        tls.crt: "{{ (lookup('file', os_ingress_cert) + '\n')|b64encode }}"
-        tls.key: "{{ (lookup('file', os_ingress_cert_key) + '\n')|b64encode }}"
+        tls.crt: "{{ default_ingress_crt|b64encode }}"
+        tls.key: "{{ default_ingress_key|b64encode }}"
       type: kubernetes.io/tls
 
 - name: configure ingress controller
