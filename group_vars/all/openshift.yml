@@ -35,16 +35,3 @@ os_network_type: OVNKubernetes
 metallb_address_range:
   - 192.12.185.32
   - 192.12.185.63
-
-openshift_users:
-  cluster-admins:
-    - lars@bu.edu
-    - robbaron@bu.edu
-    - naved001@bu.edu
-
-  approved-users:
-    - aasthana@redhat.com
-    - hukhan@redhat.com
-    - mhild@redhat.com
-    - hnalla@redhat.com
-    - skanthed@redhat.com
