@@ -35,6 +35,9 @@
     - role: ocp/tls
 
     # Connect OpenShift to the MOC SSO environment.
+    - role: ocp/authz
+
+    # Connect OpenShift to the MOC SSO environment.
     - role: ocp/moc-sso
 
     # Install CNV operator.
