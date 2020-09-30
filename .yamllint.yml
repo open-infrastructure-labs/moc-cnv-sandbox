@@ -1,3 +1,6 @@
 ---
 rules:
   line-length: disable
+
+ignore: |
+  templates/
