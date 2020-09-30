@@ -34,7 +34,7 @@
     # openshift web ui).
     - role: ocp/tls
 
-    # Connect OpenShift to the MOC SSO environment.
+    # Configure groups and role bindings
     - role: ocp/authz
 
     # Connect OpenShift to the MOC SSO environment.
