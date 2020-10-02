@@ -1,0 +1,5 @@
+---
+resources:
+  - namespace.yml
+  - operatorgroup.yml
+  - subscription.yml
