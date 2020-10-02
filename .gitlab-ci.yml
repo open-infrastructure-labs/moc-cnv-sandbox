@@ -1,14 +1,27 @@
 ---
-image: "python:3.8"
-
-before_script:
-  - python -m pip install --upgrade pip
-  - pip install -r test-requirements.txt
-
 stages:
-  - test
+  - lint
 
-test:
-  stage: test
+yamllint:
+  stage: lint
+  image: python:3.8
+
+  before_script:
+    - python -m pip install --upgrade pip
+    - pip install -r test-requirements.txt
+
   script:
     - yamllint .
+
+cred_check:
+  stage: lint
+  image: bash:5
+  script:
+    - |
+      cleartext_files=( $(find group_vars/all/creds/ -type f \
+        -exec grep -q ANSIBLE_VAULT {} \; -o -type f -print) )
+
+      if [[ ${#cleartext_files} -ne 0 ]]; then
+        echo "ERROR: cleartext files in group_vars/all/creds" >&2
+        exit 1
+      fi
