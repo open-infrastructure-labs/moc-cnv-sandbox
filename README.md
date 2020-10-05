@@ -21,10 +21,11 @@ Configuration and documentation for the [CNV][] Sandbox at the [Mass Open Cloud]
 
 Files with credentials and other secrets are encrypted using
 [ansible-vault][]. The vault key itself is included in the repository and
-is encrypted using GPG to the identities listed in the `.vault_pgp_keys`
-file.
+is encrypted using GPG to the identities listed in the
+[.vault_pgp_keys][] file.
 
 [ansible-vault]: https://docs.ansible.com/ansible/latest/user_guide/vault.html
+[.vault_pgp_eys]: .vault_pgp_keys
 
 ### Adding a new PGP key
 
