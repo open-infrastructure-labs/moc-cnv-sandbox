@@ -30,9 +30,6 @@
           address: "ipmi://{{ ipmi_host }}"
           credentialsName: "{{ inventory_hostname.split('.')[0] }}-bmc-secret"
         bootMACAddress: "{{ provisioning_mac }}"
-        image:
-          checksum: "{{ os_image_checksum_url }}"
-          url: "{{ os_image_url }}"
         userData:
           name: "{{ os_role }}-user-data"
           namespace: openshift-machine-api
