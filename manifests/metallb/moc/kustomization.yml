@@ -1,0 +1,12 @@
+namespace: metallb-system
+
+resources:
+  - ../base
+
+configMapGenerator:
+  - name: config
+    files:
+      - config
+
+generators:
+  - secret-generator.yml

@@ -1,2 +1,0 @@
----
-metallb_memberlist_secret: "{{ lookup('password', 'secrets/metallb_memberlist length=128') | b64encode }}"
