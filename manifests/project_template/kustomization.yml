@@ -1,0 +1,3 @@
+resources:
+  - project-template.yml
+  - project-config.yml
