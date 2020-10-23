@@ -1,0 +1,4 @@
+dnsmasq_extra_config: |
+  {% for host in groups.workers if host not in groups.storage %}
+  host-record=nodes.cnv.massopen.cloud,{{ hostvars[host].baremetal_ip|ipaddr('address') }}
+  {% endfor %}
