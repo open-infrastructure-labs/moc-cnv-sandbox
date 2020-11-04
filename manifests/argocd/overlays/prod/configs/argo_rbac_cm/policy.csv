@@ -1,0 +1,2 @@
+# Give Openshift group (argocdadmins) the argocd admin role
+g, argocdadmins, role:admin
