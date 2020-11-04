@@ -1,0 +1,21 @@
+- hosts: mailman
+  gather_facts: false
+  collections:
+    - moc.mailman
+  tasks:
+
+    - name: create cnv-users mailing list
+      mailman_list:
+        name: cnv-users
+        owner: "{{ cnv_users_owner }}"
+        quiet: true
+        config:
+          real_name: 'CNV-Users'
+          subject_prefix: '[cnv-users] '
+          description: >-
+            Mailing list for users of the MOC CNV sandbox cluster.
+
+    - name: add members to list
+      mailman_list_members:
+        name: cnv-users
+        members: "{{ openshift_users['approved-users'] }}"

@@ -2,3 +2,4 @@
 collections:
   - name: moc.cnv_common
   - name: containers.podman
+  - name: moc.mailman
