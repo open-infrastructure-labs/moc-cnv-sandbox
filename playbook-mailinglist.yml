@@ -8,7 +8,7 @@
       mailman_list:
         name: cnv-users
         owner: "{{ cnv_users_owner }}"
-        quiet: true
+        notify_owner: false
         config:
           real_name: 'CNV-Users'
           subject_prefix: '[cnv-users] '
