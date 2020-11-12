@@ -1,0 +1,38 @@
+---
+- name: enable root shell on serial console
+  vars:
+    console_devices: |
+      /dev/ttyS0
+  k8s:
+    state: present
+    definition:
+      apiVersion: machineconfiguration.openshift.io/v1
+      kind: MachineConfig
+      metadata:
+        name: 99-serial-console-master
+        labels:
+          machineconfiguration.openshift.io/role: master
+      spec:
+        config:
+          ignition:
+            version: 2.2.0
+          storage:
+            files:
+              - path: /etc/pam.d/login
+                filesystem: root
+                contents:
+                  source: "{{ lookup('template', 'login.pam.conf') | moc.cnv_common.ignition_encode }}"
+                mode: 0644
+              - path: /etc/consolelogin
+                filesystem: root
+                contents:
+                  source: "{{ console_devices | moc.cnv_common.ignition_encode }}"
+          systemd:
+            units:
+              - name: serial-getty@ttyS0.service
+                dropins:
+                  - name: override.conf
+                    contents: |
+                      [Service]
+                      ExecStart=
+                      ExecStart=/sbin/agetty -o '-p -- \u' --keep-baud 115200,38400,9600 --noclear --autologin root ttyS0 $TERM
