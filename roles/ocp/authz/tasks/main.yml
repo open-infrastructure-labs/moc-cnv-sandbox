@@ -6,10 +6,10 @@
       apiVersion: user.openshift.io/v1
       kind: Group
       metadata:
-        name: "{{ item }}"
-  loop:
-    - approved-users
-    - cluster-admins
+        name: "{{ item.key }}"
+  loop: "{{ openshift_groups|dict2items }}"
+  loop_control:
+    label: '{{ item.key }}'
 
 - name: populate groups if we have a list of users
   k8s:
@@ -18,12 +18,11 @@
       apiVersion: user.openshift.io/v1
       kind: Group
       metadata:
-        name: "{{ item }}"
-      users: "{{ openshift_users[item] }}"
-  when: item in openshift_users|default([])
-  loop:
-    - approved-users
-    - cluster-admins
+        name: "{{ item.key }}"
+      users: "{{ item.value }}"
+  loop: "{{ openshift_groups|dict2items }}"
+  loop_control:
+    label: '{{ item.key }}'
 
 - name: ensure nad-view-user role exists
   k8s:
