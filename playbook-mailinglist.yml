@@ -18,4 +18,4 @@
     - name: add members to list
       mailman_list_members:
         name: cnv-users
-        members: "{{ openshift_users['approved-users'] }}"
+        members: "{{ openshift_groups['approved-users'] }}"
