@@ -13,7 +13,7 @@
           - ReadWriteMany
         resources:
           requests:
-            storage: 100Gi
+            storage: 200Gi
         storageClassName: ocs-storagecluster-cephfs
         volumeMode: Filesystem
 
