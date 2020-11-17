@@ -1,5 +1,6 @@
 ---
 os_cluster_name: lars-cnv
+os_cluster_id: cnv
 os_base_domain: cnv.massopen.cloud
 os_vip_api: 192.12.185.104
 os_vip_ingress: 192.12.185.105
@@ -35,3 +36,4 @@ os_network_type: OVNKubernetes
 metallb_address_range:
   - 192.12.185.32
   - 192.12.185.63
+

@@ -1,2 +1,6 @@
 ---
-openshift_release: fast-4.6
+openshift_release: fast-4.5
+openshift_image:
+    checksum: http://172.22.0.3:6180/images/rhcos-45.82.202008010929-0-openstack.x86_64.qcow2/rhcos-45.82.202008010929-0-compressed.x86_64.qcow2.md5sum
+    url: http://172.22.0.3:6180/images/rhcos-45.82.202008010929-0-openstack.x86_64.qcow2/rhcos-45.82.202008010929-0-compressed.x86_64.qcow2
+
