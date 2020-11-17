@@ -3,9 +3,14 @@
     name: pull-secret
 
 - name: ensure clusterconfigs directory exists
+  become: true
   file:
     path: /home/kni/clusterconfigs
-    state: directory
+    state: "{{ item }}"
+    owner: "{{ ansible_user }}"
+  loop:
+    - absent
+    - directory
 
 - name: create install-config.yaml
   template:
