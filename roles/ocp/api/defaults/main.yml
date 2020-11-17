@@ -1,4 +1,10 @@
-deployment_wait_retries: 180
-deployment_wait_delay: 10
-machineconfig_wait_retries: 180
-machineconfig_wait_delay: 10
+---
+default_wait_retries: 180
+default_wait_delay: 10
+
+deployment_wait_retries: "{{ default_wait_retries }}"
+deployment_wait_delay: "{{ default_wait_delay }}"
+machineconfig_wait_retries: "{{ default_wait_retries }}"
+machineconfig_wait_delay: "{{ default_wait_delay }}"
+operator_wait_retries: "{{ default_wait_retries }}"
+operator_wait_delay: "{{ default_wait_delay }}"

@@ -1,0 +1,23 @@
+---
+- name: wait until subscription exists
+  k8s_info:
+    api_version: operators.coreos.com/v1alpha1
+    kind: Subscription
+    namespace: "{{ operator_ns }}"
+    name: "{{ operator_name }}"
+  register: operator_exists
+  until: >-
+    operator_exists.resources|length > 0
+  retries: "{{ operator_wait_retries }}"
+  delay: "{{ operator_wait_delay }}"
+
+- name: wait for subscription to install
+  k8s_info:
+    api_version: operators.coreos.com/v1alpha1
+    kind: Subscription
+    namespace: "{{ operator_ns }}"
+    name: "{{ operator_name }}"
+  register: operator_subscription
+  until: operator_subscription.resources.0.status.state == "AtLatestKnown"
+  retries: "{{ operator_wait_retries }}"
+  delay: "{{ operator_wait_delay }}"
