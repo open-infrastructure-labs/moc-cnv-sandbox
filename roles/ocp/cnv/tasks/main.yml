@@ -21,13 +21,15 @@
         name: kubevirt-hyperconverged
         source: redhat-operators
         sourceNamespace: openshift-marketplace
+        startingCSV: "{{ cnv_version }}"
 
 - name: wait for operator installation to complete
   include_role:
     name: ocp/api
-    tasks_from: waitfordeployment.yml
+    tasks_from: waitforsubscription.yml
   vars:
-    deployment_ns: openshift-cnv
+    operator_ns: openshift-cnv
+    operator_name: kubevirt-hyperconverged
 
 - name: create cnv operator deployment
   k8s:

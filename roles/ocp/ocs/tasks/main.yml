@@ -72,9 +72,10 @@
 - name: wait for operator installation to complete
   include_role:
     name: ocp/api
-    tasks_from: waitfordeployment.yml
+    tasks_from: waitforsubscription.yml
   vars:
-    deployment_ns: openshift-storage
+    operator_ns: openshift-storage
+    operator_name: ocs-operator
 
 - name: create local storage volumes
   tags: [ocs.volumes]
