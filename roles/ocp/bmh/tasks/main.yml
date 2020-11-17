@@ -1,5 +1,6 @@
 ---
-- name: create ipmi secrets for storage nodes
+- name: create ipmi secrets for openshift nodes
+  tags: [bmh.secret]
   delegate_to: localhost
   k8s:
     state: present
@@ -10,9 +11,9 @@
         name: "{{ inventory_hostname.split('.')[0] }}-bmc-secret"
         namespace: openshift-machine-api
       type: Opaque
-      data:
-        password: "{{ os_ipmi_password|b64encode }}"
-        username: "{{ os_ipmi_user|b64encode }}"
+      stringData:
+        password: "{{ os_ipmi_password }}"
+        username: "{{ os_ipmi_user }}"
 
 - name: create bmh objects for openshift nodes
   delegate_to: localhost
@@ -25,12 +26,10 @@
         name: "{{ inventory_hostname.split('.')[0] }}"
         namespace: openshift-machine-api
       spec:
-        online: true
+        online: "{{ bmh_online|default(true)|bool }}"
         bmc:
           address: "ipmi://{{ ipmi_host }}"
           credentialsName: "{{ inventory_hostname.split('.')[0] }}-bmc-secret"
+          disableCertificateVerification: true
         bootMACAddress: "{{ provisioning_mac }}"
-        userData:
-          name: "{{ os_role }}-user-data"
-          namespace: openshift-machine-api
-        hardwareProfile: "{{ os_hardware_profile|default('unknown') }}"
+        hardwareProfile: "{{ os_hardware_profile|default(omit) }}"
