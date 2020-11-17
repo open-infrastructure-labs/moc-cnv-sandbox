@@ -1,4 +1,6 @@
 ---
 ocs_channel_version: stable-4.5
-ocs_version: ocs-operator.v4.5.0
+ocs_version: ocs-operator.v4.5.2
 ocs_replicas: 3
+
+os_prototype_machineset: "{{ os_cluster_id }}-worker-0"

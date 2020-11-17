@@ -1,4 +1,17 @@
 ---
+- name: look up existing machineset
+  tags: [machineset]
+  k8s_info:
+    api_version: machine.openshift.io/v1beta1
+    kind: MachineSet
+    namespace: openshift-machine-api
+    name: "{{ os_prototype_machineset }}"
+  register: proto
+
+- tags: [machineset]
+  set_fact:
+    ms_image_info: "{{ proto|json_query('resources[0].spec.template.spec.providerSpec.value.image') }}"
+
 - name: ensure storage machineset exists
   tags: [machineset]
   k8s:
@@ -8,24 +21,24 @@
       kind: MachineSet
       metadata:
         labels:
-          machine.openshift.io/cluster-api-cluster: cnv
+          machine.openshift.io/cluster-api-cluster: "{{ os_cluster_id }}"
           machine.openshift.io/cluster-api-machine-role: worker
           machine.openshift.io/cluster-api-machine-type: worker
-        name: cnv-storage-0
+        name: "{{ os_cluster_id }}-storage-0"
         namespace: openshift-machine-api
       spec:
-        replicas: "{{ ocs_replicas }}"
+        replicas: 3
         selector:
           matchLabels:
-            machine.openshift.io/cluster-api-cluster: cnv
-            machine.openshift.io/cluster-api-machineset: cnv-storage-0
+            machine.openshift.io/cluster-api-cluster: "{{ os_cluster_id }}"
+            machine.openshift.io/cluster-api-machineset: "{{ os_cluster_id }}-storage-0"
         template:
           metadata:
             labels:
-              machine.openshift.io/cluster-api-cluster: cnv
+              machine.openshift.io/cluster-api-cluster: "{{ os_cluster_id }}"
               machine.openshift.io/cluster-api-machine-role: worker
               machine.openshift.io/cluster-api-machine-type: worker
-              machine.openshift.io/cluster-api-machineset: cnv-storage-0
+              machine.openshift.io/cluster-api-machineset: "{{ os_cluster_id }}-storage-0"
           spec:
             metadata:
               labels:
@@ -33,11 +46,7 @@
             providerSpec:
               value:
                 hostSelector: {}
-                image:
-                  checksum: "{{ os_image_checksum_url }}"
-                  url: "{{ os_image_url }}"
-                metadata:
-                  creationTimestamp: null
+                image: "{{ ms_image_info }}"
                 userData:
                   name: worker-user-data
 
