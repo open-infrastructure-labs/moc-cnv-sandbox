@@ -6,6 +6,8 @@ spec:
   destinations:
     - namespace: 'opf-*'
       server: 'https://kubernetes.default.svc'
+    - namespace: 'argocd'
+      server: 'https://kubernetes.default.svc'
   sourceRepos:
     - '*'
   roles:
@@ -61,6 +63,8 @@ spec:
       kind: StatefulSet
     - group: apps.openshift.io
       kind: DeploymentConfig
+    - group: argoproj.io
+      kind: Application
     - group: authorization.openshift.io
       kind: RoleBindingRestriction
     - group: authorization.openshift.io

@@ -1,0 +1,19 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: opf-app-of-apps
+spec:
+  destination:
+    namespace: argocd
+    name: in-cluster
+  project: operate-first
+  source:
+    path: .
+    repoURL: https://github.com/operate-first/argocd-apps.git
+    targetRevision: HEAD
+  syncPolicy:
+    automated:
+      selfHeal: true
+      prune: true
+    syncOptions:
+    - Validate=false
