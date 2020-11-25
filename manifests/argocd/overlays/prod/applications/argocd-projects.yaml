@@ -1,0 +1,19 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: argocd-projects
+spec:
+  destination:
+    namespace: argocd
+    name: in-cluster
+  project: cluster-management
+  source:
+    path: /manifests/argocd/overlays/prod/projects
+    repoURL: https://gitlab.com/open-infrastructure-labs/moc-cnv-sandbox.git
+    targetRevision: HEAD
+  syncPolicy:
+    automated:
+      selfHeal: true
+      prune: true
+    syncOptions:
+    - Validate=false
