@@ -97,6 +97,8 @@ spec:
       kind: CephObjectStore
     - group: ceph.rook.io
       kind: CephObjectStoreUser
+    - group: core.observatorium.io
+      kind: Observatorium
     - group: extensions
       kind: Ingress
     - group: hco.kubevirt.io
@@ -111,6 +113,12 @@ spec:
       kind: ImageStreamTag
     - group: image.openshift.io
       kind: ImageTag
+    - group: integreatly.org
+      kind: GrafanaDashboard
+    - group: integreatly.org
+      kind: GrafanaDataSource
+    - group: integreatly.org
+      kind: Grafana
     - group: kfdef.apps.kubeflow.org
       kind: KfDef
     - group: kubevirt.io
@@ -143,6 +151,16 @@ spec:
       kind: StorageLocation
     - group: metrics.k8s.io
       kind: PodMetrics
+    - group: monitoring.coreos.com
+      kind: Alertmanager
+    - group: monitoring.coreos.com
+      kind: Prometheus
+    - group: monitoring.coreos.com
+      kind: PrometheusRule
+    - group: monitoring.coreos.com
+      kind: ServiceMonitor
+    - group: monitoring.coreos.com
+      kind: ThanosRuler
     - group: networking.k8s.io
       kind: Ingress
     - group: networking.k8s.io
