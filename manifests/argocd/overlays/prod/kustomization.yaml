@@ -16,6 +16,7 @@ configMapGenerator:
   - configs/argo_cm/kustomize.buildOptions
   - configs/argo_cm/url
   - configs/argo_cm/configManagementPlugins
+  - configs/argo_cm/users.anonymous.enabled
 - name: argocd-rbac-cm
   behavior: replace
   files:
