@@ -5,3 +5,4 @@ resources:
   - operate-first.yaml
   - data-science.yaml
   - thoth.yaml
+  - rekor.yaml
