@@ -64,6 +64,12 @@ spec:
     - group: apps.openshift.io
       kind: DeploymentConfig
     - group: argoproj.io
+      kind: CronWorkflow
+    - group: argoproj.io
+      kind: Workflow
+    - group: argoproj.io
+      kind: WorkflowTemplate
+    - group: argoproj.io
       kind: Application
     - group: authorization.openshift.io
       kind: RoleBindingRestriction
