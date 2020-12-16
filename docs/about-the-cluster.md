@@ -14,7 +14,7 @@ the Container Native Virtualization ([CNV][]) operator.  See the
 1. File a ticket in our [issue tracker][]
 requesting access.
 
-[issue tracker]: https://gitlab.com/open-infrastructure-labs/moc-cnv-sandbox/-/issues
+[issue tracker]: https://github.com/open-infrastructure-labs/moc-cnv-sandbox/issues
 
 1. One of our cluster admins will review your request and approve it if
    appropriate. Currently, accounts are limited to employees of Red Hat,
