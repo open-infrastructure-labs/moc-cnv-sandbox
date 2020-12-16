@@ -9,7 +9,7 @@ spec:
   project: cluster-management
   source:
     path: manifests/argocd/overlays/prod/projects
-    repoURL: https://gitlab.com/open-infrastructure-labs/moc-cnv-sandbox.git
+    repoURL: https://github.com/open-infrastructure-labs/moc-cnv-sandbox.git
     targetRevision: HEAD
   syncPolicy:
     automated:
