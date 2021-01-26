@@ -11,10 +11,11 @@ the Container Native Virtualization ([CNV][]) operator.  See the
 
 ## Request access to the MOC CNV cluster
 
-1. File a ticket in our [issue tracker][]
-requesting access.
+1. [Open an issue][] to request access.
 
-[issue tracker]: https://github.com/open-infrastructure-labs/moc-cnv-sandbox/issues
+[open an issue]: https://github.com/operate-first/support/issues/new?labels=onboarding&template=onboarding_to_cluster.md&title=Access+request
+
+1. Select the "moc" cluster where indicated.
 
 1. One of our cluster admins will review your request and approve it if
    appropriate. Currently, accounts are limited to employees of Red Hat,
