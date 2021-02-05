@@ -1,7 +1,7 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - github.com/operate-first/continuous-deployment/manifests/overlays/moc-cnv?ref=v1.8.3-2
+  - github.com/operate-first/continuous-deployment/manifests/overlays/moc-cnv?ref=master
   - operate-first-app-of-apps.yaml
 
 patchesJson6902:
